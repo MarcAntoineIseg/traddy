@@ -1,7 +1,15 @@
+
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, Filter, X, MapPin, Calendar, Tag } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -24,32 +32,46 @@ const SAMPLE_LEADS = [
     title: "Property Investment Lead",
     category: "Real Estate",
     price: 450,
+    name: "John Smith",
+    email: "john.smith@example.com",
+    phone: "+1 (555) 123-4567",
     description: "Qualified lead interested in luxury properties in downtown area. Budget range: $500k-$1M.",
     addedDays: 2,
     location: "New York",
-    status: "New"
+    status: "New",
+    budget: "500k-1M",
+    age: "35-44"
   },
   {
     id: 2,
     title: "Software Development Project",
     category: "Technology",
     price: 750,
+    name: "Jane Doe",
+    email: "jane.doe@example.com",
+    phone: "+1 (555) 987-6543",
     description: "Startup looking for a development team to build their MVP. 6-month project timeline.",
     addedDays: 1,
     location: "Remote",
-    status: "Hot"
+    status: "Hot",
+    budget: "100k-500k",
+    age: "25-34"
   },
   {
     id: 3,
     title: "Financial Advisory Services",
     category: "Finance",
     price: 300,
+    name: "Robert Johnson",
+    email: "robert.j@example.com",
+    phone: "+1 (555) 456-7890",
     description: "High-net-worth individual seeking investment advice for portfolio diversification.",
     addedDays: 3,
     location: "Chicago",
-    status: "New"
+    status: "New",
+    budget: "1M+",
+    age: "45-54"
   },
-  // Add more sample leads as needed
 ];
 
 const Marketplace = () => {
@@ -58,7 +80,8 @@ const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<string>("");
-  const [priceRange, setPriceRange] = useState<string>("");
+  const [selectedBudget, setSelectedBudget] = useState<string>("");
+  const [selectedAge, setSelectedAge] = useState<string>("");
   const [selectedLead, setSelectedLead] = useState<typeof SAMPLE_LEADS[0] | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
@@ -70,13 +93,17 @@ const Marketplace = () => {
     const matchesCategory = !selectedCategory || lead.category === selectedCategory;
     const matchesLocation = !selectedLocation || lead.location === selectedLocation;
     const matchesStatus = !selectedStatus || lead.status === selectedStatus;
-    const matchesPriceRange = !priceRange || 
-      (priceRange === "0-250" && lead.price <= 250) ||
-      (priceRange === "251-500" && lead.price > 250 && lead.price <= 500) ||
-      (priceRange === "501+" && lead.price > 500);
+    const matchesBudget = !selectedBudget || lead.budget === selectedBudget;
+    const matchesAge = !selectedAge || lead.age === selectedAge;
 
-    return matchesSearch && matchesCategory && matchesLocation && matchesStatus && matchesPriceRange;
+    return matchesSearch && matchesCategory && matchesLocation && 
+           matchesStatus && matchesBudget && matchesAge;
   });
+
+  // Function to blur sensitive information
+  const blurText = (text: string) => {
+    return text.replace(/./g, '•');
+  };
 
   return (
     <div className="animate-fadeIn">
@@ -105,13 +132,13 @@ const Marketplace = () => {
 
         {/* Filters */}
         {showFilters && (
-          <div className="grid gap-4 rounded-lg border border-market-200 bg-white p-4 md:grid-cols-4">
+          <div className="grid gap-4 rounded-lg border border-market-200 bg-white p-4 md:grid-cols-5">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger>
-                <SelectValue placeholder="Category" />
+                <SelectValue placeholder="Industry" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="">All Industries</SelectItem>
                 <SelectItem value="Real Estate">Real Estate</SelectItem>
                 <SelectItem value="Technology">Technology</SelectItem>
                 <SelectItem value="Finance">Finance</SelectItem>
@@ -130,6 +157,30 @@ const Marketplace = () => {
               </SelectContent>
             </Select>
 
+            <Select value={selectedAge} onValueChange={setSelectedAge}>
+              <SelectTrigger>
+                <SelectValue placeholder="Age Range" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All Ages</SelectItem>
+                <SelectItem value="25-34">25-34</SelectItem>
+                <SelectItem value="35-44">35-44</SelectItem>
+                <SelectItem value="45-54">45-54</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedBudget} onValueChange={setSelectedBudget}>
+              <SelectTrigger>
+                <SelectValue placeholder="Budget" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All Budgets</SelectItem>
+                <SelectItem value="100k-500k">$100k-$500k</SelectItem>
+                <SelectItem value="500k-1M">$500k-$1M</SelectItem>
+                <SelectItem value="1M+">$1M+</SelectItem>
+              </SelectContent>
+            </Select>
+
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>
               <SelectTrigger>
                 <SelectValue placeholder="Status" />
@@ -140,57 +191,65 @@ const Marketplace = () => {
                 <SelectItem value="Hot">Hot</SelectItem>
               </SelectContent>
             </Select>
-
-            <Select value={priceRange} onValueChange={setPriceRange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Price Range" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">All Prices</SelectItem>
-                <SelectItem value="0-250">$0 - $250</SelectItem>
-                <SelectItem value="251-500">$251 - $500</SelectItem>
-                <SelectItem value="501+">$501+</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         )}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredLeads.map((lead) => (
-          <Card key={lead.id} className="animated-border card-hover">
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-600">
-                  {lead.category}
-                </span>
-                <span className="text-lg font-semibold text-market-900">
-                  ${lead.price}
-                </span>
-              </div>
-              <h3 className="mt-4 text-lg font-medium text-market-900">
-                {lead.title}
-              </h3>
-              <p className="mt-2 text-sm text-market-600">
-                {lead.description}
-              </p>
-              <div className="mt-4 flex items-center justify-between">
-                <span className="text-sm text-market-500">
-                  Added {lead.addedDays} days ago
-                </span>
-                <button 
-                  className="rounded-lg bg-market-900 px-4 py-2 text-sm font-medium text-white hover:bg-market-800"
-                  onClick={() => {
-                    setSelectedLead(lead);
-                    setIsSheetOpen(true);
-                  }}
-                >
-                  View Details
-                </button>
-              </div>
-            </div>
-          </Card>
-        ))}
+      <div className="rounded-lg border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Title</TableHead>
+              <TableHead>Industry</TableHead>
+              <TableHead>Contact Info</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Budget</TableHead>
+              <TableHead>Age Range</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredLeads.map((lead) => (
+              <TableRow key={lead.id}>
+                <TableCell className="font-medium">{lead.title}</TableCell>
+                <TableCell>{lead.category}</TableCell>
+                <TableCell>
+                  <div className="space-y-1 text-sm">
+                    <div className="font-medium text-market-900">{blurText(lead.name)}</div>
+                    <div className="text-market-500">{blurText(lead.email)}</div>
+                    <div className="text-market-500">{blurText(lead.phone)}</div>
+                  </div>
+                </TableCell>
+                <TableCell>{lead.location}</TableCell>
+                <TableCell>{lead.budget}</TableCell>
+                <TableCell>{lead.age}</TableCell>
+                <TableCell>
+                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${
+                    lead.status === "Hot" 
+                      ? "bg-red-100 text-red-600" 
+                      : "bg-blue-100 text-blue-600"
+                  }`}>
+                    {lead.status}
+                  </span>
+                </TableCell>
+                <TableCell className="font-medium">${lead.price}</TableCell>
+                <TableCell>
+                  <button
+                    className="rounded-lg bg-market-900 px-3 py-1 text-sm font-medium text-white hover:bg-market-800"
+                    onClick={() => {
+                      setSelectedLead(lead);
+                      setIsSheetOpen(true);
+                    }}
+                  >
+                    View Details
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
 
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
