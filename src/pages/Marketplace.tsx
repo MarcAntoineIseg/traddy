@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, Filter, X } from "lucide-react";
+import { Search, Filter, X, MapPin, Calendar, Tag } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -10,6 +9,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 
 // Sample data - replace with real data from Supabase later
 const SAMPLE_LEADS = [
@@ -53,6 +59,8 @@ const Marketplace = () => {
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [priceRange, setPriceRange] = useState<string>("");
+  const [selectedLead, setSelectedLead] = useState<typeof SAMPLE_LEADS[0] | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   // Filter leads based on search and filter criteria
   const filteredLeads = SAMPLE_LEADS.filter((lead) => {
@@ -170,7 +178,13 @@ const Marketplace = () => {
                 <span className="text-sm text-market-500">
                   Added {lead.addedDays} days ago
                 </span>
-                <button className="rounded-lg bg-market-900 px-4 py-2 text-sm font-medium text-white hover:bg-market-800">
+                <button 
+                  className="rounded-lg bg-market-900 px-4 py-2 text-sm font-medium text-white hover:bg-market-800"
+                  onClick={() => {
+                    setSelectedLead(lead);
+                    setIsSheetOpen(true);
+                  }}
+                >
                   View Details
                 </button>
               </div>
@@ -178,6 +192,58 @@ const Marketplace = () => {
           </Card>
         ))}
       </div>
+
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetContent>
+          {selectedLead && (
+            <div className="h-full overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle className="text-xl font-semibold">
+                  {selectedLead.title}
+                </SheetTitle>
+                <SheetDescription>
+                  <div className="mt-6 space-y-6">
+                    <div className="flex items-center justify-between">
+                      <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-600">
+                        {selectedLead.category}
+                      </span>
+                      <span className="text-2xl font-bold text-market-900">
+                        ${selectedLead.price}
+                      </span>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 text-market-600">
+                        <MapPin className="h-4 w-4" />
+                        <span>{selectedLead.location}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-market-600">
+                        <Calendar className="h-4 w-4" />
+                        <span>Added {selectedLead.addedDays} days ago</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-market-600">
+                        <Tag className="h-4 w-4" />
+                        <span>{selectedLead.status}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-market-900">Description</h4>
+                      <p className="text-market-600">
+                        {selectedLead.description}
+                      </p>
+                    </div>
+
+                    <button className="w-full rounded-lg bg-market-900 px-4 py-3 text-sm font-medium text-white hover:bg-market-800">
+                      Purchase Lead
+                    </button>
+                  </div>
+                </SheetDescription>
+              </SheetHeader>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
