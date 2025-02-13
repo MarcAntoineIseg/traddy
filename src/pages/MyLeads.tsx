@@ -11,15 +11,15 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Trash2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
-// Types for our lead file data
 type LeadFile = {
   id: string;
   fileName: string;
@@ -32,12 +32,18 @@ const MyLeads = () => {
   const [leadFiles, setLeadFiles] = useState<LeadFile[]>([]);
 
   useEffect(() => {
-    // Load existing files from localStorage
     const storedFiles = localStorage.getItem('leadFiles');
     if (storedFiles) {
       setLeadFiles(JSON.parse(storedFiles));
     }
   }, []);
+
+  const handleDelete = (fileId: string) => {
+    const updatedFiles = leadFiles.filter(file => file.id !== fileId);
+    localStorage.setItem('leadFiles', JSON.stringify(updatedFiles));
+    setLeadFiles(updatedFiles);
+    toast.success("Import supprimé avec succès");
+  };
 
   const getStatusBadge = (status: LeadFile["status"]) => {
     const styles = {
@@ -56,16 +62,27 @@ const MyLeads = () => {
       return (
         <div className="flex items-center gap-2">
           {statusElement}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <HelpCircle className="h-4 w-4 text-market-400" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Our teams are currently processing your file. Please be patient.</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <div className="flex items-center">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <HelpCircle className="h-4 w-4 text-market-400" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Our teams are currently processing your file. Please be patient.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(status);
+              }}
+              className="ml-2 hover:text-red-600 transition-colors"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       );
     }
@@ -104,7 +121,17 @@ const MyLeads = () => {
                     <TableCell>
                       {format(new Date(file.importDate), "MMM d, yyyy")}
                     </TableCell>
-                    <TableCell>{getStatusBadge(file.status)}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {getStatusBadge(file.status)}
+                        <button 
+                          onClick={() => handleDelete(file.id)}
+                          className="hover:text-red-600 transition-colors"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
