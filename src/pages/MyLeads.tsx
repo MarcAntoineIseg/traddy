@@ -60,7 +60,7 @@ const MyLeads = () => {
     toast.success("Import supprimé avec succès");
   };
 
-  const getStatusBadge = (status: LeadFile["status"], fileId: string) => {
+  const getStatusBadge = (status: LeadFile["status"]) => {
     const styles = {
       completed: "bg-green-100 text-green-800 hover:bg-green-100",
       processing: "bg-blue-100 text-blue-800 hover:bg-blue-100",
@@ -93,17 +93,7 @@ const MyLeads = () => {
       );
     }
 
-    return (
-      <div className="flex items-center gap-2">
-        {statusElement}
-        <button 
-          onClick={() => setFileToDelete(fileId)}
-          className="hover:text-red-600 transition-colors"
-        >
-          <Trash2 className="h-4 w-4 text-red-500" />
-        </button>
-      </div>
-    );
+    return statusElement;
   };
 
   return (
@@ -137,6 +127,7 @@ const MyLeads = () => {
                   <TableHead className="text-right">Number of Leads</TableHead>
                   <TableHead>Import Date</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -147,7 +138,15 @@ const MyLeads = () => {
                     <TableCell>
                       {format(new Date(file.importDate), "MMM d, yyyy")}
                     </TableCell>
-                    <TableCell>{getStatusBadge(file.status, file.id)}</TableCell>
+                    <TableCell>{getStatusBadge(file.status)}</TableCell>
+                    <TableCell>
+                      <button 
+                        onClick={() => setFileToDelete(file.id)}
+                        className="hover:text-red-600 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
