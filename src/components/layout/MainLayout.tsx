@@ -4,9 +4,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
-  ShoppingCart,
-  FileText,
-  BarChart3,
   Settings,
   Menu,
   X,
@@ -21,9 +18,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "My Leads", href: "/leads", icon: ShoppingCart },
-    { name: "Earnings", href: "/earnings", icon: FileText },
-    { name: "Analytics", href: "/analytics", icon: BarChart3 },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 
