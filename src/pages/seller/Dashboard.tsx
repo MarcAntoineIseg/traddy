@@ -1,5 +1,6 @@
 
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   BarChart3,
   DollarSign,
@@ -7,14 +8,21 @@ import {
   Package,
   ArrowUp,
   ArrowDown,
+  Plus,
 } from "lucide-react";
 
 const Dashboard = () => {
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold text-market-900">Seller Dashboard</h1>
-        <p className="text-market-600">Manage your leads and track your performance</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-market-900">Seller Dashboard</h1>
+          <p className="text-market-600">Manage your leads and track your performance</p>
+        </div>
+        <Button className="bg-market-600 hover:bg-market-700 text-white">
+          <Plus className="mr-2 h-4 w-4" />
+          Sell Leads
+        </Button>
       </div>
 
       {/* Stats Overview */}
