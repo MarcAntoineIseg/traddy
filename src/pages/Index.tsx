@@ -15,7 +15,7 @@ const Index = () => {
     // In a real app, this would handle authentication
     localStorage.setItem("isLoggedIn", "true");
     toast.success(isLogin ? "Logged in successfully!" : "Account created successfully!");
-    navigate("/seller/dashboard");
+    navigate("/dashboard");
   };
 
   return (

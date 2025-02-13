@@ -20,11 +20,11 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   const navigation = [
-    { name: "Dashboard", href: "/seller/dashboard", icon: LayoutDashboard },
-    { name: "My Leads", href: "/seller/leads", icon: ShoppingCart },
-    { name: "Earnings", href: "/seller/earnings", icon: FileText },
-    { name: "Analytics", href: "/seller/analytics", icon: BarChart3 },
-    { name: "Settings", href: "/seller/settings", icon: Settings },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "My Leads", href: "/leads", icon: ShoppingCart },
+    { name: "Earnings", href: "/earnings", icon: FileText },
+    { name: "Analytics", href: "/analytics", icon: BarChart3 },
+    { name: "Settings", href: "/settings", icon: Settings },
   ];
 
   const handleLogout = () => {
