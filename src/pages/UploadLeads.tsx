@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Upload, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const UploadLeads = () => {
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [gdprAccepted, setGdprAccepted] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -26,6 +28,10 @@ const UploadLeads = () => {
   const handleUpload = () => {
     if (!selectedFile) {
       toast.error("Please select a file first");
+      return;
+    }
+    if (!gdprAccepted) {
+      toast.error("Please accept the GDPR compliance checkbox");
       return;
     }
     // Here you would typically handle the file upload
@@ -62,17 +68,33 @@ const UploadLeads = () => {
             />
           </div>
           
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-market-600">
-              {selectedFile ? `Selected: ${selectedFile.name}` : "No file selected"}
-            </p>
-            <Button
-              onClick={handleUpload}
-              className="bg-market-600 hover:bg-market-700 text-white"
-              disabled={!selectedFile}
-            >
-              Upload Leads
-            </Button>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="gdpr" 
+                checked={gdprAccepted}
+                onCheckedChange={(checked) => setGdprAccepted(checked as boolean)}
+              />
+              <label
+                htmlFor="gdpr"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                En transmettant mon fichier je certifie que les données présentent dans ce fichier respectent le RGPD
+              </label>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-market-600">
+                {selectedFile ? `Selected: ${selectedFile.name}` : "No file selected"}
+              </p>
+              <Button
+                onClick={handleUpload}
+                className="bg-market-600 hover:bg-market-700 text-white"
+                disabled={!selectedFile}
+              >
+                Upload Leads
+              </Button>
+            </div>
           </div>
         </div>
       </Card>
