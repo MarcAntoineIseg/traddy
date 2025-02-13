@@ -44,12 +44,23 @@ const UploadLeads = () => {
     setIsUploading(true);
     
     try {
-      // Here we simulate the file upload process
-      // In a real application, you would send the file to your backend
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate network request
+      // Simulate file processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Save file data to localStorage
+      const existingFiles = JSON.parse(localStorage.getItem('leadFiles') || '[]');
+      const newFile = {
+        id: Date.now().toString(),
+        fileName: selectedFile.name,
+        leadCount: Math.floor(Math.random() * 200) + 50, // Simulated lead count
+        importDate: new Date().toISOString(),
+        status: "completed" as const
+      };
+      
+      localStorage.setItem('leadFiles', JSON.stringify([newFile, ...existingFiles]));
       
       toast.success("File uploaded successfully");
-      navigate("/my-leads"); // Redirect to My Leads page after successful upload
+      navigate("/my-leads");
     } catch (error) {
       toast.error("Failed to upload file. Please try again.");
     } finally {

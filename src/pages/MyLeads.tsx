@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -17,35 +17,20 @@ type LeadFile = {
   id: string;
   fileName: string;
   leadCount: number;
-  importDate: Date;
+  importDate: string; // Changed to string for localStorage compatibility
   status: "processing" | "completed" | "error";
 };
 
 const MyLeads = () => {
-  // Temporary mock data - this would normally come from your backend
-  const [leadFiles] = useState<LeadFile[]>([
-    {
-      id: "1",
-      fileName: "leads-january-2024.csv",
-      leadCount: 150,
-      importDate: new Date("2024-01-15"),
-      status: "completed",
-    },
-    {
-      id: "2",
-      fileName: "leads-february-2024.csv",
-      leadCount: 200,
-      importDate: new Date("2024-02-01"),
-      status: "processing",
-    },
-    {
-      id: "3",
-      fileName: "leads-march-2024.csv",
-      leadCount: 175,
-      importDate: new Date(),
-      status: "error",
-    },
-  ]);
+  const [leadFiles, setLeadFiles] = useState<LeadFile[]>([]);
+
+  useEffect(() => {
+    // Load existing files from localStorage
+    const storedFiles = localStorage.getItem('leadFiles');
+    if (storedFiles) {
+      setLeadFiles(JSON.parse(storedFiles));
+    }
+  }, []);
 
   const getStatusBadge = (status: LeadFile["status"]) => {
     const styles = {
@@ -72,28 +57,32 @@ const MyLeads = () => {
 
       <Card>
         <div className="p-6">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>File Name</TableHead>
-                <TableHead className="text-right">Number of Leads</TableHead>
-                <TableHead>Import Date</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {leadFiles.map((file) => (
-                <TableRow key={file.id}>
-                  <TableCell className="font-medium">{file.fileName}</TableCell>
-                  <TableCell className="text-right">{file.leadCount}</TableCell>
-                  <TableCell>
-                    {format(file.importDate, "MMM d, yyyy")}
-                  </TableCell>
-                  <TableCell>{getStatusBadge(file.status)}</TableCell>
+          {leadFiles.length === 0 ? (
+            <p className="text-center text-market-600 py-8">No lead files uploaded yet</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>File Name</TableHead>
+                  <TableHead className="text-right">Number of Leads</TableHead>
+                  <TableHead>Import Date</TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {leadFiles.map((file) => (
+                  <TableRow key={file.id}>
+                    <TableCell className="font-medium">{file.fileName}</TableCell>
+                    <TableCell className="text-right">{file.leadCount}</TableCell>
+                    <TableCell>
+                      {format(new Date(file.importDate), "MMM d, yyyy")}
+                    </TableCell>
+                    <TableCell>{getStatusBadge(file.status)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </Card>
     </div>
