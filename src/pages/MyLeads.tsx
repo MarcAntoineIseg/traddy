@@ -11,7 +11,9 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { HelpCircle, Trash2 } from "lucide-react";
+import { HelpCircle, Trash2, Upload } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   Tooltip,
   TooltipContent,
@@ -39,6 +41,7 @@ type LeadFile = {
 };
 
 const MyLeads = () => {
+  const navigate = useNavigate();
   const [leadFiles, setLeadFiles] = useState<LeadFile[]>([]);
   const [fileToDelete, setFileToDelete] = useState<string | null>(null);
 
@@ -120,6 +123,16 @@ const MyLeads = () => {
 
       <Card>
         <div className="p-6">
+          <div className="mb-6">
+            <Button 
+              onClick={() => navigate("/upload-leads")}
+              className="bg-market-600 hover:bg-market-700 text-white"
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              Add Leads
+            </Button>
+          </div>
+          
           {leadFiles.length === 0 ? (
             <p className="text-center text-market-600 py-8">No lead files uploaded yet</p>
           ) : (
