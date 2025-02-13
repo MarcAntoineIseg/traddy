@@ -67,7 +67,7 @@ const UploadLeads = () => {
         fileName: selectedFile.name,
         leadCount,
         importDate: new Date().toISOString(),
-        status: "completed" as const
+        status: "processing" as const // Changed to processing by default
       };
       
       localStorage.setItem('leadFiles', JSON.stringify([newFile, ...existingFiles]));

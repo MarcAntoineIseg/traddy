@@ -11,13 +11,20 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { HelpCircle } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Types for our lead file data
 type LeadFile = {
   id: string;
   fileName: string;
   leadCount: number;
-  importDate: string; // Changed to string for localStorage compatibility
+  importDate: string;
   status: "processing" | "completed" | "error";
 };
 
@@ -39,11 +46,31 @@ const MyLeads = () => {
       error: "bg-red-100 text-red-800 hover:bg-red-100",
     };
 
-    return (
+    const statusElement = (
       <Badge className={styles[status]} variant="secondary">
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
+
+    if (status === "processing") {
+      return (
+        <div className="flex items-center gap-2">
+          {statusElement}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <HelpCircle className="h-4 w-4 text-market-400" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Our teams are currently processing your file. Please be patient.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      );
+    }
+
+    return statusElement;
   };
 
   return (
