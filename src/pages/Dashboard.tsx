@@ -1,6 +1,7 @@
 
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   BarChart3,
   Users,
@@ -8,6 +9,7 @@ import {
   TrendingUp,
   ArrowUpRight,
   ArrowDownRight,
+  Plus,
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -44,7 +46,16 @@ const Dashboard = () => {
 
   return (
     <div className="animate-fadeIn">
-      <h1 className="mb-8 text-2xl font-semibold text-market-900">Dashboard</h1>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-semibold text-market-900">Seller Dashboard</h1>
+          <p className="text-market-600">Manage your leads and track your performance</p>
+        </div>
+        <Button className="bg-market-600 hover:bg-market-700 text-white">
+          <Plus className="mr-2 h-4 w-4" />
+          Sell Leads
+        </Button>
+      </div>
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
