@@ -74,21 +74,39 @@ const MyLeads = () => {
       return (
         <div className="flex items-center gap-2">
           {statusElement}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <HelpCircle className="h-4 w-4 text-market-400" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Our teams are currently processing your file. Please be patient.</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <div className="flex items-center gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <HelpCircle className="h-4 w-4 text-market-400" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Our teams are currently processing your file. Please be patient.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <button 
+              onClick={() => setFileToDelete(status)}
+              className="hover:text-red-600 transition-colors"
+            >
+              <Trash2 className="h-4 w-4 text-red-500" />
+            </button>
+          </div>
         </div>
       );
     }
 
-    return statusElement;
+    return (
+      <div className="flex items-center gap-2">
+        {statusElement}
+        <button 
+          onClick={() => setFileToDelete(status)}
+          className="hover:text-red-600 transition-colors"
+        >
+          <Trash2 className="h-4 w-4 text-red-500" />
+        </button>
+      </div>
+    );
   };
 
   return (
@@ -112,7 +130,6 @@ const MyLeads = () => {
                   <TableHead className="text-right">Number of Leads</TableHead>
                   <TableHead>Import Date</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -124,14 +141,6 @@ const MyLeads = () => {
                       {format(new Date(file.importDate), "MMM d, yyyy")}
                     </TableCell>
                     <TableCell>{getStatusBadge(file.status)}</TableCell>
-                    <TableCell>
-                      <button 
-                        onClick={() => setFileToDelete(file.id)}
-                        className="hover:text-market-400 transition-colors"
-                      >
-                        <Trash2 className="h-4 w-4 text-market-400" />
-                      </button>
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
