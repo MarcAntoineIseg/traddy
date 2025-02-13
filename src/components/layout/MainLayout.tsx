@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -10,19 +10,28 @@ import {
   Settings,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
+import { toast } from "sonner";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Marketplace", href: "/marketplace", icon: ShoppingCart },
-    { name: "Invoices", href: "/invoices", icon: FileText },
-    { name: "Analytics", href: "/analytics", icon: BarChart3 },
-    { name: "Settings", href: "/settings", icon: Settings },
+    { name: "Dashboard", href: "/seller/dashboard", icon: LayoutDashboard },
+    { name: "My Leads", href: "/seller/leads", icon: ShoppingCart },
+    { name: "Earnings", href: "/seller/earnings", icon: FileText },
+    { name: "Analytics", href: "/seller/analytics", icon: BarChart3 },
+    { name: "Settings", href: "/seller/settings", icon: Settings },
   ];
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    toast.success("Logged out successfully");
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-market-50">
@@ -79,6 +88,17 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
               );
             })}
           </nav>
+
+          {/* Logout button */}
+          <div className="border-t border-market-100 p-4">
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-market-600 hover:bg-market-50 hover:text-market-900"
+            >
+              <LogOut className="mr-3 h-5 w-5 text-market-400" />
+              Logout
+            </button>
+          </div>
         </div>
       </div>
 
