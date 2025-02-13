@@ -13,6 +13,7 @@ const UploadLeads = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [gdprAccepted, setGdprAccepted] = useState(false);
   const [consentVerified, setConsentVerified] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -26,7 +27,7 @@ const UploadLeads = () => {
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!selectedFile) {
       toast.error("Please select a file first");
       return;
@@ -39,8 +40,21 @@ const UploadLeads = () => {
       toast.error("Please verify that you have valid consent for all leads");
       return;
     }
-    // Here you would typically handle the file upload
-    toast.success("File uploaded successfully");
+
+    setIsUploading(true);
+    
+    try {
+      // Here we simulate the file upload process
+      // In a real application, you would send the file to your backend
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate network request
+      
+      toast.success("File uploaded successfully");
+      navigate("/my-leads"); // Redirect to My Leads page after successful upload
+    } catch (error) {
+      toast.error("Failed to upload file. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -70,6 +84,7 @@ const UploadLeads = () => {
               accept=".csv"
               onChange={handleFileChange}
               className="max-w-xs"
+              disabled={isUploading}
             />
           </div>
           
@@ -79,6 +94,7 @@ const UploadLeads = () => {
                 id="gdpr" 
                 checked={gdprAccepted}
                 onCheckedChange={(checked) => setGdprAccepted(checked as boolean)}
+                disabled={isUploading}
               />
               <label
                 htmlFor="gdpr"
@@ -93,6 +109,7 @@ const UploadLeads = () => {
                 id="consent" 
                 checked={consentVerified}
                 onCheckedChange={(checked) => setConsentVerified(checked as boolean)}
+                disabled={isUploading}
               />
               <label
                 htmlFor="consent"
@@ -109,9 +126,9 @@ const UploadLeads = () => {
               <Button
                 onClick={handleUpload}
                 className="bg-market-600 hover:bg-market-700 text-white"
-                disabled={!selectedFile}
+                disabled={!selectedFile || isUploading}
               >
-                Upload Leads
+                {isUploading ? "Uploading..." : "Upload Leads"}
               </Button>
             </div>
           </div>
