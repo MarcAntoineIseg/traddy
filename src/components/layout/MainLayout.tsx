@@ -9,6 +9,7 @@ import {
   X,
   LogOut,
   FileSpreadsheet,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -20,6 +21,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "My Leads", href: "/my-leads", icon: FileSpreadsheet },
+    { name: "Upload Leads", href: "/upload-leads", icon: Upload },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 
