@@ -18,6 +18,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
 type LeadFile = {
@@ -30,6 +40,7 @@ type LeadFile = {
 
 const MyLeads = () => {
   const [leadFiles, setLeadFiles] = useState<LeadFile[]>([]);
+  const [fileToDelete, setFileToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const storedFiles = localStorage.getItem('leadFiles');
@@ -42,6 +53,7 @@ const MyLeads = () => {
     const updatedFiles = leadFiles.filter(file => file.id !== fileId);
     localStorage.setItem('leadFiles', JSON.stringify(updatedFiles));
     setLeadFiles(updatedFiles);
+    setFileToDelete(null);
     toast.success("Import supprimé avec succès");
   };
 
@@ -62,27 +74,16 @@ const MyLeads = () => {
       return (
         <div className="flex items-center gap-2">
           {statusElement}
-          <div className="flex items-center">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <HelpCircle className="h-4 w-4 text-market-400" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Our teams are currently processing your file. Please be patient.</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDelete(status);
-              }}
-              className="ml-2 hover:text-red-600 transition-colors"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <HelpCircle className="h-4 w-4 text-market-400" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Our teams are currently processing your file. Please be patient.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       );
     }
@@ -111,6 +112,7 @@ const MyLeads = () => {
                   <TableHead className="text-right">Number of Leads</TableHead>
                   <TableHead>Import Date</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -121,16 +123,14 @@ const MyLeads = () => {
                     <TableCell>
                       {format(new Date(file.importDate), "MMM d, yyyy")}
                     </TableCell>
+                    <TableCell>{getStatusBadge(file.status)}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        {getStatusBadge(file.status)}
-                        <button 
-                          onClick={() => handleDelete(file.id)}
-                          className="hover:text-red-600 transition-colors"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
+                      <button 
+                        onClick={() => setFileToDelete(file.id)}
+                        className="hover:text-market-400 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4 text-market-400" />
+                      </button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -139,6 +139,26 @@ const MyLeads = () => {
           )}
         </div>
       </Card>
+
+      <AlertDialog open={!!fileToDelete} onOpenChange={() => setFileToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer cet import ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action est irréversible. Les données de l'import seront définitivement supprimées.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => fileToDelete && handleDelete(fileToDelete)}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
