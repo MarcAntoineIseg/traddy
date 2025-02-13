@@ -27,6 +27,19 @@ const UploadLeads = () => {
     }
   };
 
+  const countCsvLines = async (file: File): Promise<number> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target?.result as string;
+        // Count lines, subtract 1 for header row
+        const lines = text.split('\n').filter(line => line.trim().length > 0);
+        resolve(Math.max(0, lines.length - 1)); // Ensure we don't return negative numbers
+      };
+      reader.readAsText(file);
+    });
+  };
+
   const handleUpload = async () => {
     if (!selectedFile) {
       toast.error("Please select a file first");
@@ -44,22 +57,22 @@ const UploadLeads = () => {
     setIsUploading(true);
     
     try {
-      // Simulate file processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Count actual number of leads in the CSV
+      const leadCount = await countCsvLines(selectedFile);
       
       // Save file data to localStorage
       const existingFiles = JSON.parse(localStorage.getItem('leadFiles') || '[]');
       const newFile = {
         id: Date.now().toString(),
         fileName: selectedFile.name,
-        leadCount: Math.floor(Math.random() * 200) + 50, // Simulated lead count
+        leadCount,
         importDate: new Date().toISOString(),
         status: "completed" as const
       };
       
       localStorage.setItem('leadFiles', JSON.stringify([newFile, ...existingFiles]));
       
-      toast.success("File uploaded successfully");
+      toast.success(`File uploaded successfully with ${leadCount} leads`);
       navigate("/my-leads");
     } catch (error) {
       toast.error("Failed to upload file. Please try again.");
