@@ -8,6 +8,7 @@ import {
   Menu,
   X,
   LogOut,
+  FileSpreadsheet,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -18,6 +19,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "My Leads", href: "/upload-leads", icon: FileSpreadsheet },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 
