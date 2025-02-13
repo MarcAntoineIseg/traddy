@@ -88,28 +88,12 @@ const MyLeads = () => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <button 
-              onClick={() => setFileToDelete(status)}
-              className="hover:text-red-600 transition-colors"
-            >
-              <Trash2 className="h-4 w-4 text-red-500" />
-            </button>
           </div>
         </div>
       );
     }
 
-    return (
-      <div className="flex items-center gap-2">
-        {statusElement}
-        <button 
-          onClick={() => setFileToDelete(status)}
-          className="hover:text-red-600 transition-colors"
-        >
-          <Trash2 className="h-4 w-4 text-red-500" />
-        </button>
-      </div>
-    );
+    return statusElement;
   };
 
   return (
@@ -143,6 +127,7 @@ const MyLeads = () => {
                   <TableHead className="text-right">Number of Leads</TableHead>
                   <TableHead>Import Date</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -154,6 +139,14 @@ const MyLeads = () => {
                       {format(new Date(file.importDate), "MMM d, yyyy")}
                     </TableCell>
                     <TableCell>{getStatusBadge(file.status)}</TableCell>
+                    <TableCell>
+                      <button 
+                        onClick={() => setFileToDelete(file.id)}
+                        className="hover:text-red-600 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
