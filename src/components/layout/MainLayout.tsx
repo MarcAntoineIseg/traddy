@@ -19,7 +19,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "My Leads", href: "/upload-leads", icon: FileSpreadsheet },
+    { name: "My Leads", href: "/my-leads", icon: FileSpreadsheet },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 
