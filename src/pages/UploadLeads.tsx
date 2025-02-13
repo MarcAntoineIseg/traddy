@@ -12,6 +12,7 @@ const UploadLeads = () => {
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [gdprAccepted, setGdprAccepted] = useState(false);
+  const [consentVerified, setConsentVerified] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -32,6 +33,10 @@ const UploadLeads = () => {
     }
     if (!gdprAccepted) {
       toast.error("Please accept the GDPR compliance checkbox");
+      return;
+    }
+    if (!consentVerified) {
+      toast.error("Please verify that you have valid consent for all leads");
       return;
     }
     // Here you would typically handle the file upload
@@ -80,6 +85,20 @@ const UploadLeads = () => {
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 En transmettant mon fichier je certifie que les données présentent dans ce fichier respectent le RGPD
+              </label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="consent" 
+                checked={consentVerified}
+                onCheckedChange={(checked) => setConsentVerified(checked as boolean)}
+              />
+              <label
+                htmlFor="consent"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Je certifie avoir intégré une preuve de consentement valide pour chacun des leads
               </label>
             </div>
 
