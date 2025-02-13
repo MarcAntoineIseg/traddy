@@ -3,10 +3,11 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, ArrowLeft } from "lucide-react";
+import { Upload, ArrowLeft, Download } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const UploadLeads = () => {
   const navigate = useNavigate();
@@ -57,17 +58,15 @@ const UploadLeads = () => {
     setIsUploading(true);
     
     try {
-      // Count actual number of leads in the CSV
       const leadCount = await countCsvLines(selectedFile);
       
-      // Save file data to localStorage
       const existingFiles = JSON.parse(localStorage.getItem('leadFiles') || '[]');
       const newFile = {
         id: Date.now().toString(),
         fileName: selectedFile.name,
         leadCount,
         importDate: new Date().toISOString(),
-        status: "processing" as const // Changed to processing by default
+        status: "processing" as const
       };
       
       localStorage.setItem('leadFiles', JSON.stringify([newFile, ...existingFiles]));
@@ -95,6 +94,16 @@ const UploadLeads = () => {
         <h1 className="text-2xl font-semibold text-market-900">Upload Leads</h1>
         <p className="text-market-600">Upload your CSV file containing lead data</p>
       </div>
+
+      <Alert className="mb-6 bg-blue-50 border-blue-200">
+        <AlertDescription className="flex items-center justify-between">
+          <span>Please ensure that your file contains the required criteria. Download this template:</span>
+          <Button variant="outline" size="sm" className="ml-4" onClick={() => {}}>
+            <Download className="mr-2 h-4 w-4" />
+            Download Template
+          </Button>
+        </AlertDescription>
+      </Alert>
 
       <Card className="max-w-2xl">
         <div className="p-6">
