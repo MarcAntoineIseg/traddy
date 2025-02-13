@@ -23,12 +23,12 @@ const Index = () => {
         <div className="p-8">
           <div className="text-center">
             <h1 className="text-2xl font-semibold text-market-900">
-              LeadMarket
+              traddy
             </h1>
             <p className="mt-2 text-market-600">
               {isLogin
                 ? "Sign in to your account"
-                : "Create your LeadMarket account"}
+                : "Create your traddy account"}
             </p>
           </div>
 

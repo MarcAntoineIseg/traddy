@@ -49,7 +49,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           {/* Logo */}
           <div className="flex h-16 items-center border-b px-6">
             <Link to="/" className="text-xl font-semibold text-market-900">
-              LeadMarket
+              traddy
             </Link>
           </div>
 
