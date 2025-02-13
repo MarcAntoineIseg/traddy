@@ -50,12 +50,32 @@ const UploadLeads = () => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const text = e.target?.result as string;
-        // Count lines, subtract 1 for header row
         const lines = text.split('\n').filter(line => line.trim().length > 0);
         resolve(Math.max(0, lines.length - 1)); // Ensure we don't return negative numbers
       };
       reader.readAsText(file);
     });
+  };
+
+  const sendToN8N = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('https://n8n.traddy.fr/webhook/3d048e76-9ee2-4705-8953-34d94f770a8c', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send file to N8N');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error sending file to N8N:', error);
+      throw error;
+    }
   };
 
   const handleUpload = async () => {
@@ -77,6 +97,8 @@ const UploadLeads = () => {
     try {
       const leadCount = await countCsvLines(selectedFile);
       
+      await sendToN8N(selectedFile);
+      
       const existingFiles = JSON.parse(localStorage.getItem('leadFiles') || '[]');
       const newFile = {
         id: Date.now().toString(),
@@ -88,10 +110,10 @@ const UploadLeads = () => {
       
       localStorage.setItem('leadFiles', JSON.stringify([newFile, ...existingFiles]));
       
-      toast.success(`File uploaded successfully with ${leadCount} leads`);
+      toast.success(`File uploaded successfully and sent for processing`);
       navigate("/my-leads");
     } catch (error) {
-      toast.error("Failed to upload file. Please try again.");
+      toast.error("Failed to upload and process file. Please try again.");
     } finally {
       setIsUploading(false);
     }
