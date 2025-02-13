@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./components/layout/MainLayout";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
+import UploadLeads from "./pages/UploadLeads";
 import Marketplace from "./pages/Marketplace";
 import NotFound from "./pages/NotFound";
 
@@ -14,7 +15,6 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    // In a real app, this would check for authentication
     return <MainLayout>{children}</MainLayout>;
   };
 
@@ -31,6 +31,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/upload-leads"
+              element={
+                <ProtectedRoute>
+                  <UploadLeads />
                 </ProtectedRoute>
               }
             />

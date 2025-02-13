@@ -2,6 +2,7 @@
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   BarChart3,
   Users,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const stats = [
     {
       name: "Total Leads",
@@ -51,7 +53,10 @@ const Dashboard = () => {
           <h1 className="text-2xl font-semibold text-market-900">Seller Dashboard</h1>
           <p className="text-market-600">Manage your leads and track your performance</p>
         </div>
-        <Button className="bg-market-600 hover:bg-market-700 text-white">
+        <Button 
+          className="bg-market-600 hover:bg-market-700 text-white"
+          onClick={() => navigate("/upload-leads")}
+        >
           <Plus className="mr-2 h-4 w-4" />
           Sell Leads
         </Button>
