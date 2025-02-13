@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, ArrowLeft, Download } from "lucide-react";
+import { Upload, ArrowLeft, Download, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -114,7 +114,10 @@ const UploadLeads = () => {
 
       <Alert className="mb-6 bg-blue-50 border-blue-200">
         <AlertDescription className="flex items-center justify-between">
-          <span>Please ensure that your file contains the required criteria. Download this template:</span>
+          <span className="flex items-center">
+            <AlertCircle className="mr-2 h-5 w-5 text-red-400" />
+            Please ensure that your file contains the required criteria. Download this template:
+          </span>
           <Button variant="outline" size="sm" className="ml-4" onClick={handleDownloadTemplate}>
             <Download className="mr-2 h-4 w-4" />
             Download Template
