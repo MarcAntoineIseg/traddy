@@ -1,6 +1,5 @@
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Index from "@/pages/Index";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "@/pages/Dashboard";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
@@ -15,45 +14,37 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Index />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
-              <MainLayout>
-                <Dashboard />
-              </MainLayout>
-            </ProtectedRoute>
+            <MainLayout>
+              <Dashboard />
+            </MainLayout>
           }
         />
         <Route
           path="/my-leads"
           element={
-            <ProtectedRoute>
-              <MainLayout>
-                <MyLeads />
-              </MainLayout>
-            </ProtectedRoute>
+            <MainLayout>
+              <MyLeads />
+            </MainLayout>
           }
         />
         <Route
           path="/upload-leads"
           element={
-            <ProtectedRoute>
-              <MainLayout>
-                <UploadLeads />
-              </MainLayout>
-            </ProtectedRoute>
+            <MainLayout>
+              <UploadLeads />
+            </MainLayout>
           }
         />
         <Route
           path="/settings"
           element={
-            <ProtectedRoute>
-              <MainLayout>
-                <Settings />
-              </MainLayout>
-            </ProtectedRoute>
+            <MainLayout>
+              <Settings />
+            </MainLayout>
           }
         />
         <Route path="*" element={<NotFound />} />

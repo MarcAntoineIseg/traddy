@@ -1,24 +1,7 @@
 
-import { Navigate } from "react-router-dom";
-import { useEffect } from "react";
+import { ReactNode } from "react";
 
-// This is a temporary auth check until we implement real authentication
-const isAuthenticated = () => {
-  const auth = localStorage.getItem("isLoggedIn");
-  if (!auth) {
-    localStorage.setItem("isLoggedIn", "true");
-    return true;
-  }
-  return auth === "true";
-};
-
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      localStorage.setItem("isLoggedIn", "true");
-    }
-  }, []);
-
+const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   return <>{children}</>;
 };
 
