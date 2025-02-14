@@ -37,7 +37,14 @@ const CreateAccount = () => {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message === "User already registered") {
+          toast.error("Un compte existe déjà avec cet email. Veuillez vous connecter.");
+          navigate("/");
+          return;
+        }
+        throw error;
+      }
 
       if (data.user) {
         toast.success("Compte créé avec succès !");
