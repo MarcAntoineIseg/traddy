@@ -1,57 +1,57 @@
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // In a real app, this would handle authentication
-    localStorage.setItem("isLoggedIn", "true");
-    toast.success(isLogin ? "Logged in successfully!" : "Account created successfully!");
-    navigate("/dashboard");
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        toast.success("Connexion réussie !");
+        navigate("/dashboard");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Erreur lors de la connexion");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-market-50 p-4">
-      <Card className="w-full max-w-md animate-fadeIn animated-border">
+      <Card className="w-full max-w-md animate-fadeIn">
         <div className="p-8">
           <div className="text-center">
             <h1 className="text-2xl font-semibold text-market-900">
               traddy
             </h1>
             <p className="mt-2 text-market-600">
-              {isLogin
-                ? "Sign in to your account"
-                : "Create your traddy account"}
+              Connectez-vous à votre compte
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-            {!isLogin && (
-              <div className="space-y-2">
-                <label
-                  htmlFor="name"
-                  className="text-sm font-medium text-market-900"
-                >
-                  Full Name
-                </label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="John Doe"
-                  className="w-full"
-                  required
-                />
-              </div>
-            )}
-
             <div className="space-y-2">
               <label
                 htmlFor="email"
@@ -62,9 +62,12 @@ const Index = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="vous@example.com"
                 className="w-full"
                 required
+                value={formData.email}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                disabled={isLoading}
               />
             </div>
 
@@ -73,7 +76,7 @@ const Index = () => {
                 htmlFor="password"
                 className="text-sm font-medium text-market-900"
               >
-                Password
+                Mot de passe
               </label>
               <Input
                 id="password"
@@ -81,23 +84,29 @@ const Index = () => {
                 placeholder="••••••••"
                 className="w-full"
                 required
+                value={formData.password}
+                onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                disabled={isLoading}
               />
             </div>
 
-            <Button type="submit" className="w-full bg-market-900 hover:bg-market-800">
-              {isLogin ? "Sign In" : "Create Account"}
+            <Button 
+              type="submit" 
+              className="w-full bg-market-900 hover:bg-market-800"
+              disabled={isLoading}
+            >
+              {isLoading ? "Connexion..." : "Se connecter"}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <button
               type="button"
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => navigate("/create-account")}
               className="text-sm text-market-600 hover:text-market-900"
+              disabled={isLoading}
             >
-              {isLogin
-                ? "Need an account? Sign up"
-                : "Already have an account? Sign in"}
+              Pas encore de compte ? Inscrivez-vous
             </button>
           </div>
         </div>

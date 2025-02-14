@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import UploadLeads from "@/pages/UploadLeads";
 import MyLeads from "@/pages/MyLeads";
 import CreateAccount from "@/pages/CreateAccount";
+import Index from "@/pages/Index";
 
 import "./App.css";
 
@@ -15,38 +16,46 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/create-account" replace />} />
+        <Route path="/" element={<Index />} />
         <Route path="/create-account" element={<CreateAccount />} />
         <Route
           path="/dashboard"
           element={
-            <MainLayout>
-              <Dashboard />
-            </MainLayout>
+            <ProtectedRoute>
+              <MainLayout>
+                <Dashboard />
+              </MainLayout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/my-leads"
           element={
-            <MainLayout>
-              <MyLeads />
-            </MainLayout>
+            <ProtectedRoute>
+              <MainLayout>
+                <MyLeads />
+              </MainLayout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/upload-leads"
           element={
-            <MainLayout>
-              <UploadLeads />
-            </MainLayout>
+            <ProtectedRoute>
+              <MainLayout>
+                <UploadLeads />
+              </MainLayout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/settings"
           element={
-            <MainLayout>
-              <Settings />
-            </MainLayout>
+            <ProtectedRoute>
+              <MainLayout>
+                <Settings />
+              </MainLayout>
+            </ProtectedRoute>
           }
         />
         <Route path="*" element={<NotFound />} />

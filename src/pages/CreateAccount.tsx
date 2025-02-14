@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -8,16 +8,68 @@ import { Separator } from "@/components/ui/separator";
 import { User, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const CreateAccount = () => {
   const navigate = useNavigate();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    firstname: '',
+    lastname: '',
+    email: '',
+    password: ''
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // Dans une vraie application, ceci gérerait l'inscription
-    toast.success("Compte créé avec succès !");
-    navigate("/dashboard");
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            first_name: formData.firstname,
+            last_name: formData.lastname
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        toast.success("Compte créé avec succès !");
+        navigate("/dashboard");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Une erreur est survenue lors de la création du compte");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google'
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      toast.error("Erreur lors de la connexion avec Google");
+    }
+  };
+
+  const handleMicrosoftSignIn = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'azure'
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      toast.error("Erreur lors de la connexion avec Microsoft");
+    }
   };
 
   return (
@@ -35,7 +87,8 @@ const CreateAccount = () => {
             <Button 
               variant="outline" 
               className="w-full justify-start py-6 text-base font-normal"
-              onClick={() => toast.info("Connexion avec Google")}
+              onClick={handleGoogleSignIn}
+              disabled={isLoading}
             >
               <User className="h-5 w-5 mr-3" />
               Google
@@ -43,7 +96,8 @@ const CreateAccount = () => {
             <Button 
               variant="outline" 
               className="w-full justify-start py-6 text-base font-normal"
-              onClick={() => toast.info("Connexion avec Microsoft")}
+              onClick={handleMicrosoftSignIn}
+              disabled={isLoading}
             >
               <Users className="h-5 w-5 mr-3" />
               Microsoft
@@ -64,6 +118,9 @@ const CreateAccount = () => {
                   id="firstname"
                   placeholder="Votre prénom"
                   required
+                  value={formData.firstname}
+                  onChange={(e) => setFormData(prev => ({ ...prev, firstname: e.target.value }))}
+                  disabled={isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -72,6 +129,9 @@ const CreateAccount = () => {
                   id="lastname"
                   placeholder="Votre nom"
                   required
+                  value={formData.lastname}
+                  onChange={(e) => setFormData(prev => ({ ...prev, lastname: e.target.value }))}
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -83,6 +143,9 @@ const CreateAccount = () => {
                 type="email"
                 placeholder="E-mail professionnel"
                 required
+                value={formData.email}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                disabled={isLoading}
               />
             </div>
 
@@ -94,11 +157,15 @@ const CreateAccount = () => {
                   type={isPasswordVisible ? "text" : "password"}
                   placeholder="••••••••"
                   required
+                  value={formData.password}
+                  onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setIsPasswordVisible(!isPasswordVisible)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-market-400 hover:text-market-500"
+                  disabled={isLoading}
                 >
                   {isPasswordVisible ? "🙈" : "👁️"}
                 </button>
@@ -112,27 +179,24 @@ const CreateAccount = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="recaptcha"
-                  className="h-4 w-4 mr-2"
-                  required
-                />
-                <Label htmlFor="recaptcha">Je ne suis pas un robot</Label>
-              </div>
-            </div>
-
-            <Button type="submit" className="w-full bg-market-600 hover:bg-market-700 text-white py-6 text-lg">
-              Créer un compte
+            <Button 
+              type="submit" 
+              className="w-full bg-market-600 hover:bg-market-700 text-white py-6 text-lg"
+              disabled={isLoading}
+            >
+              {isLoading ? "Création en cours..." : "Créer un compte"}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-market-600">
               Vous avez déjà un compte ?{" "}
-              <Button variant="link" className="text-market-600 hover:text-market-800" onClick={() => navigate("/login")}>
+              <Button 
+                variant="link" 
+                className="text-market-600 hover:text-market-800" 
+                onClick={() => navigate("/")}
+                disabled={isLoading}
+              >
                 Se connecter
               </Button>
             </p>
