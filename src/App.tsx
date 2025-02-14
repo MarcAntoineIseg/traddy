@@ -7,6 +7,7 @@ import MainLayout from "@/components/layout/MainLayout";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import UploadLeads from "@/pages/UploadLeads";
 import MyLeads from "@/pages/MyLeads";
+import CreateAccount from "@/pages/CreateAccount";
 
 import "./App.css";
 
@@ -14,7 +15,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Navigate to="/create-account" replace />} />
+        <Route path="/create-account" element={<CreateAccount />} />
         <Route
           path="/dashboard"
           element={
