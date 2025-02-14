@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Google, Microsoft } from "lucide-react";
+import { User, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -37,7 +37,7 @@ const CreateAccount = () => {
               className="w-full justify-start py-6 text-base font-normal"
               onClick={() => toast.info("Connexion avec Google")}
             >
-              <Google className="h-5 w-5 mr-3" />
+              <User className="h-5 w-5 mr-3" />
               Google
             </Button>
             <Button 
@@ -45,7 +45,7 @@ const CreateAccount = () => {
               className="w-full justify-start py-6 text-base font-normal"
               onClick={() => toast.info("Connexion avec Microsoft")}
             >
-              <Microsoft className="h-5 w-5 mr-3" />
+              <Users className="h-5 w-5 mr-3" />
               Microsoft
             </Button>
           </div>
