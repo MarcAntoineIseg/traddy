@@ -31,33 +31,57 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 type LeadFile = {
   id: string;
-  fileName: string;
-  leadCount: number;
-  importDate: string;
+  file_name: string;
+  lead_count: number;
+  import_date: string;
   status: "processing" | "completed" | "error";
 };
 
 const MyLeads = () => {
   const navigate = useNavigate();
-  const [leadFiles, setLeadFiles] = useState<LeadFile[]>([]);
   const [fileToDelete, setFileToDelete] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const storedFiles = localStorage.getItem('leadFiles');
-    if (storedFiles) {
-      setLeadFiles(JSON.parse(storedFiles));
+  const { data: leadFiles = [], isLoading } = useQuery({
+    queryKey: ['leadFiles'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('lead_files')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching lead files:', error);
+        throw error;
+      }
+
+      return data as LeadFile[];
     }
-  }, []);
+  });
 
-  const handleDelete = (fileId: string) => {
-    const updatedFiles = leadFiles.filter(file => file.id !== fileId);
-    localStorage.setItem('leadFiles', JSON.stringify(updatedFiles));
-    setLeadFiles(updatedFiles);
-    setFileToDelete(null);
-    toast.success("Import supprimé avec succès");
+  const handleDelete = async (fileId: string) => {
+    try {
+      const { error } = await supabase
+        .from('lead_files')
+        .delete()
+        .eq('id', fileId);
+
+      if (error) {
+        throw error;
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ['leadFiles'] });
+      setFileToDelete(null);
+      toast.success("Import supprimé avec succès");
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      toast.error("Une erreur est survenue lors de la suppression");
+    }
   };
 
   const getStatusBadge = (status: LeadFile["status"]) => {
@@ -96,6 +120,10 @@ const MyLeads = () => {
     return statusElement;
   };
 
+  if (isLoading) {
+    return <div className="animate-pulse">Loading...</div>;
+  }
+
   return (
     <div className="animate-fadeIn">
       <div className="mb-8">
@@ -133,10 +161,10 @@ const MyLeads = () => {
               <TableBody>
                 {leadFiles.map((file) => (
                   <TableRow key={file.id}>
-                    <TableCell className="font-medium">{file.fileName}</TableCell>
-                    <TableCell className="text-right">{file.leadCount}</TableCell>
+                    <TableCell className="font-medium">{file.file_name}</TableCell>
+                    <TableCell className="text-right">{file.lead_count}</TableCell>
                     <TableCell>
-                      {format(new Date(file.importDate), "MMM d, yyyy")}
+                      {format(new Date(file.import_date), "MMM d, yyyy")}
                     </TableCell>
                     <TableCell>{getStatusBadge(file.status)}</TableCell>
                     <TableCell>

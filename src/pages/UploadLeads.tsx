@@ -9,6 +9,7 @@ import { TemplateAlert } from "@/components/upload-leads/TemplateAlert";
 import { FileUploader } from "@/components/upload-leads/FileUploader";
 import { ConsentCheckboxes } from "@/components/upload-leads/ConsentCheckboxes";
 import { sendToN8N, countCsvLines } from "@/services/uploadService";
+import { supabase } from "@/integrations/supabase/client";
 
 const UploadLeads = () => {
   const navigate = useNavigate();
@@ -37,16 +38,18 @@ const UploadLeads = () => {
       const leadCount = await countCsvLines(selectedFile);
       await sendToN8N(selectedFile);
       
-      const existingFiles = JSON.parse(localStorage.getItem('leadFiles') || '[]');
-      const newFile = {
-        id: Date.now().toString(),
-        fileName: selectedFile.name,
-        leadCount,
-        importDate: new Date().toISOString(),
-        status: "processing" as const
-      };
-      
-      localStorage.setItem('leadFiles', JSON.stringify([newFile, ...existingFiles]));
+      const { error } = await supabase
+        .from('lead_files')
+        .insert({
+          file_name: selectedFile.name,
+          lead_count: leadCount,
+          status: 'processing'
+        });
+
+      if (error) {
+        console.error('Error inserting file record:', error);
+        throw error;
+      }
       
       toast.success(`File uploaded successfully and sent for processing`);
       navigate("/my-leads");
