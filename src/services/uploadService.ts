@@ -4,6 +4,7 @@ export const sendToN8N = async (file: File) => {
   formData.append('files', file);
   
   try {
+    console.log('Sending POST request to N8N with file:', file.name);
     const response = await fetch('https://n8n.traddy.fr/webhook/3d048e76-9ee2-4705-8953-34d94f770a8c', {
       method: 'POST',
       body: formData,
@@ -15,6 +16,7 @@ export const sendToN8N = async (file: File) => {
     if (!response.ok) {
       console.error('N8N Response status:', response.status);
       console.error('N8N Response text:', await response.text());
+      console.error('N8N Response headers:', Object.fromEntries(response.headers.entries()));
       throw new Error('Failed to send file to N8N');
     }
 
@@ -24,6 +26,11 @@ export const sendToN8N = async (file: File) => {
     return true;
   } catch (error) {
     console.error('Error sending file to N8N:', error);
+    console.error('Error details:', {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type
+    });
     throw error;
   }
 };
