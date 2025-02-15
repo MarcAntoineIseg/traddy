@@ -35,6 +35,12 @@ const UploadLeads = () => {
     setIsUploading(true);
     
     try {
+      // Vérifier que l'utilisateur est connecté
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
       const leadCount = await countCsvLines(selectedFile);
       await sendToN8N(selectedFile);
       
@@ -43,7 +49,8 @@ const UploadLeads = () => {
         .insert({
           file_name: selectedFile.name,
           lead_count: leadCount,
-          status: 'processing'
+          status: 'processing',
+          user_id: user.id // Ajout de l'ID de l'utilisateur
         });
 
       if (error) {
