@@ -83,12 +83,9 @@ const CreateAccount = () => {
     <div className="flex min-h-screen items-center justify-center bg-market-50 p-4">
       <Card className="w-full max-w-md p-8 animate-fadeIn">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold text-market-900 mb-4">
+          <h1 className="text-3xl font-semibold text-market-900 mb-8">
             traddy
           </h1>
-          <p className="text-xl text-market-900 mb-8">
-            Essayez gratuitement
-          </p>
 
           <div className="space-y-4">
             <Button 
@@ -111,9 +108,9 @@ const CreateAccount = () => {
             </Button>
           </div>
 
-          <div className="flex items-center my-8">
+          <div className="flex items-center my-8 px-8">
             <Separator className="flex-grow" />
-            <span className="px-4 text-market-600">ou</span>
+            <span className="mx-4 text-market-600">ou</span>
             <Separator className="flex-grow" />
           </div>
 
