@@ -1,4 +1,3 @@
-
 import { useState, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -108,10 +107,11 @@ const CreateAccount = () => {
             </Button>
           </div>
 
-          <div className="flex items-center my-8 px-8">
-            <Separator className="flex-grow" />
-            <span className="mx-4 text-market-600">ou</span>
-            <Separator className="flex-grow" />
+          <div className="relative flex items-center my-8">
+            <div className="w-full border-t border-gray-200" />
+            <div className="absolute left-1/2 -translate-x-1/2 bg-white px-4">
+              <span className="text-market-600">ou</span>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6 text-left">
