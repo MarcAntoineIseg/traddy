@@ -1,10 +1,10 @@
+
 import { useState, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { User, Users } from "lucide-react";
+import { User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -59,22 +59,14 @@ const CreateAccount = () => {
   const handleGoogleSignIn = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google'
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
       });
       if (error) throw error;
     } catch (error: any) {
       toast.error("Erreur lors de la connexion avec Google");
-    }
-  };
-
-  const handleMicrosoftSignIn = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'azure'
-      });
-      if (error) throw error;
-    } catch (error: any) {
-      toast.error("Erreur lors de la connexion avec Microsoft");
     }
   };
 
@@ -95,15 +87,6 @@ const CreateAccount = () => {
             >
               <User className="h-5 w-5 mr-3" />
               Google
-            </Button>
-            <Button 
-              variant="outline" 
-              className="w-full justify-start py-6 text-base font-normal"
-              onClick={handleMicrosoftSignIn}
-              disabled={isLoading}
-            >
-              <Users className="h-5 w-5 mr-3" />
-              Microsoft
             </Button>
           </div>
 
