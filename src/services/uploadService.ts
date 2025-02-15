@@ -4,7 +4,7 @@ export const sendToN8N = async (file: File) => {
   formData.append('files', file);
   
   try {
-    const response = await fetch('https://n8n.traddy.fr/webhook/3d048e76-9ee2-4705-8953-34d94f770a8c', {
+    const response = await fetch('https://n8n.traddy.fr/webhook-test/3d048e76-9ee2-4705-8953-34d94f770a8c', {
       method: 'POST',
       body: formData,
       headers: {
