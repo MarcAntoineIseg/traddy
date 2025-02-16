@@ -7,36 +7,57 @@ publish = "dist"
 for = "/*.js"
 [headers.values]
 Content-Type = "text/javascript"
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+Access-Control-Allow-Headers = "*"
 
 [[headers]]
 for = "/*.mjs"
 [headers.values]
 Content-Type = "text/javascript"
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+Access-Control-Allow-Headers = "*"
 
 [[headers]]
 for = "/*.jsx"
 [headers.values]
 Content-Type = "text/javascript"
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+Access-Control-Allow-Headers = "*"
 
 [[headers]]
 for = "/*.ts"
 [headers.values]
 Content-Type = "text/javascript"
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+Access-Control-Allow-Headers = "*"
 
 [[headers]]
 for = "/*.tsx"
 [headers.values]
 Content-Type = "text/javascript"
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+Access-Control-Allow-Headers = "*"
 
 [[headers]]
 for = "/manifest.json"
 [headers.values]
 Content-Type = "application/json"
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+Access-Control-Allow-Headers = "*"
 
 [[headers]]
 for = "/*"
 [headers.values]
 Content-Type = "text/html"
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+Access-Control-Allow-Headers = "*"
 
 [[redirects]]
 from = "/*"
