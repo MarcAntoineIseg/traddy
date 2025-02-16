@@ -80,11 +80,11 @@ const Settings = () => {
         <div className="p-6">
           <h2 className="text-xl font-semibold mb-4">Configuration Stripe Connect</h2>
           <p className="text-market-600 mb-4">
-            {stripeAccountId 
+            {stripeAccountId && stripeAccountId !== '' 
               ? "Votre compte Stripe est configuré."
               : "Configurez votre compte vendeur pour recevoir des paiements via Stripe."}
           </p>
-          {!stripeAccountId && (
+          {(!stripeAccountId || stripeAccountId === '') && (
             <Button 
               onClick={handleStripeSetup}
               disabled={loading}
