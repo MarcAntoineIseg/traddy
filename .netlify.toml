@@ -6,7 +6,7 @@ publish = "dist"
 [[headers]]
 for = "/*.js"
 [headers.values]
-Content-Type = "text/javascript; charset=utf-8"
+Content-Type = "application/javascript; charset=utf-8"
 Access-Control-Allow-Origin = "*"
 Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
 Access-Control-Allow-Headers = "*"
@@ -14,7 +14,7 @@ Access-Control-Allow-Headers = "*"
 [[headers]]
 for = "/*.mjs"
 [headers.values]
-Content-Type = "text/javascript; charset=utf-8"
+Content-Type = "application/javascript; charset=utf-8"
 Access-Control-Allow-Origin = "*"
 Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
 Access-Control-Allow-Headers = "*"
@@ -22,7 +22,7 @@ Access-Control-Allow-Headers = "*"
 [[headers]]
 for = "/*.jsx"
 [headers.values]
-Content-Type = "text/javascript; charset=utf-8"
+Content-Type = "application/javascript; charset=utf-8"
 Access-Control-Allow-Origin = "*"
 Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
 Access-Control-Allow-Headers = "*"
@@ -30,7 +30,7 @@ Access-Control-Allow-Headers = "*"
 [[headers]]
 for = "/*.ts"
 [headers.values]
-Content-Type = "text/javascript; charset=utf-8"
+Content-Type = "application/javascript; charset=utf-8"
 Access-Control-Allow-Origin = "*"
 Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
 Access-Control-Allow-Headers = "*"
@@ -38,7 +38,7 @@ Access-Control-Allow-Headers = "*"
 [[headers]]
 for = "/*.tsx"
 [headers.values]
-Content-Type = "text/javascript; charset=utf-8"
+Content-Type = "application/javascript; charset=utf-8"
 Access-Control-Allow-Origin = "*"
 Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
 Access-Control-Allow-Headers = "*"
