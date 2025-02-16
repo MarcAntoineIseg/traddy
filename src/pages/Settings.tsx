@@ -49,17 +49,10 @@ const Settings = () => {
   const handleStripeSetup = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/functions/v1/create-stripe-account', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-        },
-      });
-
-      const data = await response.json();
+      const { data, error } = await supabase.functions.invoke('create-stripe-account');
       
-      if (data.error) {
-        throw new Error(data.error);
+      if (error) {
+        throw error;
       }
 
       // Redirect to Stripe onboarding
