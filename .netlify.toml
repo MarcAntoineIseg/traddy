@@ -4,9 +4,29 @@ command = "npm run build"
 publish = "dist"
 
 [[headers]]
-for = "/*"
+for = "/*.js"
 [headers.values]
-Content-Type = "text/javascript; charset=UTF-8"
+Content-Type = "text/javascript"
+
+[[headers]]
+for = "/*.mjs"
+[headers.values]
+Content-Type = "text/javascript"
+
+[[headers]]
+for = "/*.jsx"
+[headers.values]
+Content-Type = "text/javascript"
+
+[[headers]]
+for = "/*.ts"
+[headers.values]
+Content-Type = "text/javascript"
+
+[[headers]]
+for = "/*.tsx"
+[headers.values]
+Content-Type = "text/javascript"
 
 [[redirects]]
 from = "/*"
