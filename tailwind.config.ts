@@ -53,7 +53,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom colors - changed from market to blue theme
         market: {
           50: "#F0F7FF",
           100: "#E0EFFF",
