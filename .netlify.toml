@@ -28,6 +28,16 @@ for = "/*.tsx"
 [headers.values]
 Content-Type = "text/javascript"
 
+[[headers]]
+for = "/manifest.json"
+[headers.values]
+Content-Type = "application/json"
+
+[[headers]]
+for = "/*"
+[headers.values]
+Content-Type = "text/html"
+
 [[redirects]]
 from = "/*"
 to = "/index.html"
