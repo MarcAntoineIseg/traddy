@@ -9,6 +9,7 @@ import UploadLeads from "@/pages/UploadLeads";
 import MyLeads from "@/pages/MyLeads";
 import CreateAccount from "@/pages/CreateAccount";
 import Index from "@/pages/Index";
+import SellerConfirmation from "@/pages/SellerConfirmation";
 
 import "./App.css";
 
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/create-account" element={<CreateAccount />} />
+        <Route path="/inscrit-vendeur" element={<SellerConfirmation />} />
         <Route
           path="/dashboard"
           element={
