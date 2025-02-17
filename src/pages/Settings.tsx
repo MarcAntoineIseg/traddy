@@ -46,27 +46,9 @@ const Settings = () => {
     fetchStripeStatus();
   }, [searchParams, toast]);
 
-  const handleStripeSetup = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase.functions.invoke('create-stripe-account');
-      
-      if (error) {
-        throw error;
-      }
-
-      // Redirect to Stripe onboarding
-      window.location.href = data.url;
-    } catch (error) {
-      console.error('Error setting up Stripe:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de configurer le compte Stripe. Veuillez réessayer.",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleStripeSetup = () => {
+    // Redirect directly to Stripe OAuth URL
+    window.location.href = "https://connect.stripe.com/oauth/v2/authorize?response_type=code&client_id=ca_Rmld1xN7sWIoBUEp2gsZtDo35Os8mGZz&scope=read_write";
   };
 
   return (
