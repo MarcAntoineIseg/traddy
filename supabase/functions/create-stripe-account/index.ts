@@ -1,70 +1,57 @@
-const express = require("express");
-const app = express();
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import Stripe from "https://esm.sh/stripe@12.0.0";
 
-const stripe = require("stripe")(
-  // This is your test secret API key.
-  'sk_test_51QtC5j4bhB59tA6JoQPTMB5difNWEcKa0OvmJ4tz3XP2ndi3N3IjZXv9Z4J2uuE4nOUUvegzLqDoGDF5YE2cRKnw00DdLOQIKT',
-  {
-    apiVersion: "2023-10-16",
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+serve(async (req) => {
+  // Gérer les requêtes CORS
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
   }
-);
 
-app.use(express.static("dist"));
-app.use(express.json());
-
-app.post("/account_link", async (req, res) => {
   try {
-    const { account } = req.body;
+    // Récupération sécurisée de la clé Stripe
+    const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeSecretKey) {
+      throw new Error("Stripe secret key is missing");
+    }
 
+    // Initialisation de Stripe
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: "2023-10-16",
+      httpClient: Stripe.createFetchHttpClient(),
+    });
+
+    // Lire le body de la requête
+    const { account } = await req.json();
+    if (!account) throw new Error("Missing account ID");
+
+    // Création du lien d'onboarding Stripe
     const accountLink = await stripe.accountLinks.create({
       account: account,
-      return_url: `${req.headers.origin}/return/${account}`,
-      refresh_url: `${req.headers.origin}/refresh/${account}`,
+      return_url: `${req.headers.get("origin")}/return/${account}`,
+      refresh_url: `${req.headers.get("origin")}/refresh/${account}`,
       type: "account_onboarding",
     });
 
-    res.json(accountLink);
-  } catch (error) {
-    console.error(
-      "An error occurred when calling the Stripe API to create an account link:",
-      error
+    return new Response(
+      JSON.stringify({ url: accountLink.url }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
     );
-    res.status(500);
-    res.send({ error: error.message });
+
+  } catch (error) {
+    console.error("Error:", error);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
   }
 });
-
-app.post("/account", async (req, res) => {
-  try {
-    const account = await stripe.accounts.create({
-      controller: {
-        stripe_dashboard: {
-          type: "express",
-        },
-        fees: {
-          payer: "application"
-        },
-        losses: {
-          payments: "application"
-        },
-      },
-    });
-
-    res.json({
-      account: account.id,
-    });
-  } catch (error) {
-    console.error(
-      "An error occurred when calling the Stripe API to create an account",
-      error
-    );
-    res.status(500);
-    res.send({ error: error.message });
-  }
-});
-
-app.get("/*", (_req, res) => {
-  res.sendFile(__dirname + "/dist/index.html");
-});
-
-app.listen(4242, () => console.log("Node server listening on port 4242! Visit http://localhost:4242 in your browser."));
