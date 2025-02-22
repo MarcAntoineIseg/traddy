@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@12.0.0";
 
@@ -26,16 +27,32 @@ serve(async (req) => {
     });
 
     // Lire le body de la requête
-    const { account } = await req.json();
-    if (!account) throw new Error("Missing account ID");
+    const { userId } = await req.json();
+    if (!userId) throw new Error("Missing user ID");
+
+    console.log("Creating Stripe account for user:", userId);
+
+    // Créer le compte Stripe Connect
+    const account = await stripe.accounts.create({
+      type: 'express',
+      country: 'FR',
+      capabilities: {
+        card_payments: { requested: true },
+        transfers: { requested: true },
+      },
+    });
+
+    console.log("Stripe account created:", account.id);
 
     // Création du lien d'onboarding Stripe
     const accountLink = await stripe.accountLinks.create({
-      account: account,
-      return_url: `${req.headers.get("origin")}/return/${account}`,
-      refresh_url: `${req.headers.get("origin")}/refresh/${account}`,
+      account: account.id,
+      refresh_url: `${req.headers.get("origin")}/settings?retry=true`,
+      return_url: `${req.headers.get("origin")}/settings?success=true`,
       type: "account_onboarding",
     });
+
+    console.log("Account link created");
 
     return new Response(
       JSON.stringify({ url: accountLink.url }),

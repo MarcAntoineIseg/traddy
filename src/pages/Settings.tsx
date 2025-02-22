@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -28,17 +29,21 @@ const Settings = () => {
 
     // Récupérer l'état du compte Stripe
     const fetchStripeStatus = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data } = await supabase
-          .from("profiles")
-          .select("stripe_account_id")
-          .eq("id", user.id)
-          .single();
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data } = await supabase
+            .from("profiles")
+            .select("stripe_account_id")
+            .eq("id", user.id)
+            .single();
 
-        if (data?.stripe_account_id) {
-          setStripeAccountId(data.stripe_account_id);
+          if (data?.stripe_account_id) {
+            setStripeAccountId(data.stripe_account_id);
+          }
         }
+      } catch (error) {
+        console.error("Erreur lors de la récupération du statut Stripe:", error);
       }
     };
 
@@ -51,12 +56,15 @@ const Settings = () => {
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       if (authError || !user) throw new Error("Utilisateur non authentifié");
 
+      console.log("Initializing Stripe setup for user:", user.id);
+
       // Appel à l'Edge Function pour obtenir l'URL d'onboarding
       const { data, error } = await supabase.functions.invoke("create-stripe-account", {
-        body: JSON.stringify({ userId: user.id }),
+        body: { userId: user.id },
       });
 
       if (error) throw error;
+      console.log("Received response from Edge Function:", data);
 
       if (data.url) {
         window.location.href = data.url; // Rediriger vers Stripe
