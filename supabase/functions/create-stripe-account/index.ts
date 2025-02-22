@@ -16,7 +16,7 @@ serve(async (req) => {
 
   try {
     // Initialize Stripe with the secret key
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
+    const stripe = new Stripe(Deno.env.get('sk_test_51QtC5j4bhB59tA6JoQPTMB5difNWEcKa0OvmJ4tz3XP2ndi3N3IjZXv9Z4J2uuE4nOUUvegzLqDoGDF5YE2cRKnw00DdLOQIKT') || '', {
       apiVersion: '2023-10-16',
       httpClient: Stripe.createFetchHttpClient(),
     })
