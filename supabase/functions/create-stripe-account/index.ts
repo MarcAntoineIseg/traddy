@@ -3,14 +3,19 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@12.0.0";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://connect.stripe.com",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Credentials": "true"
 };
 
 serve(async (req) => {
   // Gérer les requêtes CORS
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { 
+      headers: corsHeaders,
+      status: 200
+    });
   }
 
   try {
@@ -40,6 +45,7 @@ serve(async (req) => {
         card_payments: { requested: true },
         transfers: { requested: true },
       },
+      business_type: 'individual',
     });
 
     console.log("Stripe account created:", account.id);
@@ -52,12 +58,30 @@ serve(async (req) => {
       type: "account_onboarding",
     });
 
-    console.log("Account link created");
+    console.log("Account link created:", accountLink.url);
+
+    // Sauvegarder l'ID du compte Stripe dans la base de données
+    const supabaseAdminUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseAdminKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    
+    if (!supabaseAdminUrl || !supabaseAdminKey) {
+      throw new Error("Missing Supabase admin credentials");
+    }
+
+    const supabaseAdmin = createClient(supabaseAdminUrl, supabaseAdminKey);
+    
+    await supabaseAdmin
+      .from('profiles')
+      .update({ stripe_account_id: account.id })
+      .eq('id', userId);
+
+    console.log("Stripe account ID saved to database");
 
     return new Response(
       JSON.stringify({ url: accountLink.url }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200
       }
     );
 
