@@ -60,24 +60,16 @@ const Settings = () => {
 
       console.log("Initializing Stripe setup for user:", user.id);
 
-      // Appel à l'Edge Function
-      const response = await fetch(`${supabase.functions.url}/create-stripe-account`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: user.id }),
+      // Utiliser invoke au lieu d'un appel fetch direct
+      const { data, error } = await supabase.functions.invoke('create-stripe-account', {
+        body: { userId: user.id }
       });
 
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`);
-      }
-
-      const data = await response.json();
+      if (error) throw error;
+      
       console.log("Received response from Edge Function:", data);
 
-      if (data.url) {
+      if (data?.url) {
         window.location.href = data.url;
       } else {
         throw new Error("URL de Stripe non reçue");
