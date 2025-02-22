@@ -4,7 +4,7 @@ import Stripe from "https://esm.sh/stripe@12.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://zjbdgjfvjmhwflzauvki.lovable.dev",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Credentials": "true"
@@ -51,11 +51,11 @@ serve(async (req) => {
 
     console.log("Stripe account created:", account.id);
 
-    // Création du lien d'onboarding Stripe
+    // Création du lien d'onboarding Stripe avec les URLs complètes
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      refresh_url: `${req.headers.get("origin")}/settings?retry=true`,
-      return_url: `${req.headers.get("origin")}/settings?success=true`,
+      refresh_url: 'https://zjbdgjfvjmhwflzauvki.lovable.dev/settings?retry=true',
+      return_url: 'https://zjbdgjfvjmhwflzauvki.lovable.dev/settings?success=true',
       type: "account_onboarding",
     });
 
