@@ -1,95 +1,103 @@
-
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import Stripe from 'https://esm.sh/stripe@12.0.0'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import Stripe from "https://esm.sh/stripe@12.0.0";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
 
 serve(async (req) => {
   // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Initialize Stripe with the secret key
-    const stripe = new Stripe(Deno.env.get('sk_test_51QtC5j4bhB59tA6JoQPTMB5difNWEcKa0OvmJ4tz3XP2ndi3N3IjZXv9Z4J2uuE4nOUUvegzLqDoGDF5YE2cRKnw00DdLOQIKT') || '', {
-      apiVersion: '2023-10-16',
+    // Récupération sécurisée de la clé Stripe depuis les variables d'environnement
+    const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeSecretKey) {
+      throw new Error("Stripe secret key is missing");
+    }
+
+    // Initialisation de Stripe avec la clé sécurisée
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: "2023-10-16",
       httpClient: Stripe.createFetchHttpClient(),
-    })
+    });
 
-    // Get the authenticated user
-    const authHeader = req.headers.get('Authorization')!
+    // Récupération de l'utilisateur authentifié
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) throw new Error("Authorization header is missing");
+
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
       { global: { headers: { Authorization: authHeader } } }
-    )
-    
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) throw new Error('Unauthorized')
+    );
 
-    // Get user profile data
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) throw new Error("Unauthorized");
+
+    // Récupération des informations du profil utilisateur
     const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single()
-    
-    if (profileError || !profile) throw new Error('Profile not found')
+      .from("profiles")
+      .select("stripe_account_id, email")
+      .eq("id", user.id)
+      .single();
 
-    // Create a Stripe Express account
+    if (profileError || !profile) throw new Error("Profile not found");
+
+    // Vérifie si l'utilisateur a déjà un compte Stripe
+    if (profile.stripe_account_id) {
+      return new Response(
+        JSON.stringify({ message: "Stripe account already exists", stripe_account_id: profile.stripe_account_id }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Création d'un compte Stripe Express pour le vendeur
     const account = await stripe.accounts.create({
-      type: 'express',
-      country: 'FR',
-      email: user.email,
+      type: "express",
+      country: "FR",
+      email: profile.email, // Utilisation de l'email du profil
       capabilities: {
         card_payments: { requested: true },
-        transfers: { requested: true }
+        transfers: { requested: true },
       },
-    })
+    });
 
-    // Store the Stripe account ID in the user's profile
+    // Mise à jour du profil utilisateur avec l'ID Stripe
     const { error: updateError } = await supabase
-      .from('profiles')
+      .from("profiles")
       .update({ stripe_account_id: account.id })
-      .eq('id', user.id)
+      .eq("id", user.id);
 
-    if (updateError) throw updateError
+    if (updateError) throw new Error("Failed to update profile with Stripe account ID");
 
-    // Generate the account link for onboarding
+    // Génération du lien d'onboarding Stripe
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      refresh_url: `${req.headers.get('origin')}/settings?refresh=true`,
-      return_url: `${req.headers.get('origin')}/settings?success=true`,
-      type: 'account_onboarding',
-    })
+      refresh_url: `${req.headers.get("origin")}/settings?refresh=true`,
+      return_url: `${req.headers.get("origin")}/settings?success=true`,
+      type: "account_onboarding",
+    });
 
-    // Return the account link URL
     return new Response(
       JSON.stringify({ url: accountLink.url }),
-      { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        }
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
-    )
+    );
 
   } catch (error) {
-    console.error('Error:', error)
+    console.error("Error:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      { 
+      {
         status: 400,
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        }
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
-    )
+    );
   }
-})
+});
