@@ -2,7 +2,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -27,16 +27,18 @@
     --radius: 0.5rem;
   }
 
-  html, body {
-    @apply h-full w-full m-0 p-0;
+  * {
+    @apply border-border;
+  }
+
+  html, 
+  body, 
+  #root {
+    @apply h-screen w-full m-0 p-0;
   }
 
   body {
-    @apply bg-background text-foreground min-h-screen;
-  }
-
-  #root {
-    @apply min-h-screen w-full m-0 p-0;
+    @apply bg-background text-foreground;
   }
 }
 
