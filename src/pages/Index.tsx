@@ -1,3 +1,4 @@
+
 import "../index.css";
 import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
@@ -39,23 +40,23 @@ const Index = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-market-50 p-4">
-      <Card className="w-full max-w-md animate-fadeIn">
-        <div className="p-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-semibold text-market-900">
+    <div className="min-h-screen bg-white flex flex-col justify-center items-center p-4">
+      <Card className="w-full max-w-md p-8 shadow-lg rounded-lg">
+        <div className="w-full max-w-sm mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold mb-2 text-gray-900">
               traddy
             </h1>
-            <p className="mt-2 text-market-600">
+            <p className="text-gray-600">
               Connectez-vous à votre compte
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <label
                 htmlFor="email"
-                className="text-sm font-medium text-market-900"
+                className="block text-sm font-medium text-gray-700"
               >
                 Email
               </label>
@@ -63,7 +64,7 @@ const Index = () => {
                 id="email"
                 type="email"
                 placeholder="vous@example.com"
-                className="w-full"
+                className="w-full p-2 border border-gray-300 rounded-md"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
@@ -74,7 +75,7 @@ const Index = () => {
             <div className="space-y-2">
               <label
                 htmlFor="password"
-                className="text-sm font-medium text-market-900"
+                className="block text-sm font-medium text-gray-700"
               >
                 Mot de passe
               </label>
@@ -82,7 +83,7 @@ const Index = () => {
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                className="w-full"
+                className="w-full p-2 border border-gray-300 rounded-md"
                 required
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
@@ -92,7 +93,7 @@ const Index = () => {
 
             <Button 
               type="submit" 
-              className="w-full bg-market-900 hover:bg-market-800"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
               disabled={isLoading}
             >
               {isLoading ? "Connexion..." : "Se connecter"}
@@ -103,7 +104,7 @@ const Index = () => {
             <button
               type="button"
               onClick={() => navigate("/create-account")}
-              className="text-sm text-market-600 hover:text-market-900"
+              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
               disabled={isLoading}
             >
               Pas encore de compte ? Inscrivez-vous
