@@ -58,21 +58,29 @@ const Settings = () => {
         throw new Error("Utilisateur non authentifié");
       }
 
-      console.log("Initializing Stripe setup for user:", user.id);
+      // Construction de l'origine pour les URLs de redirection
+      const origin = window.location.origin;
+      console.log("Current origin:", origin);
 
-      // Utiliser invoke au lieu d'un appel fetch direct
+      // Appel à la fonction Edge avec l'origine
       const { data, error } = await supabase.functions.invoke('create-stripe-account', {
-        body: { userId: user.id }
+        body: { 
+          userId: user.id,
+          origin: origin 
+        }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erreur fonction Edge:", error);
+        throw error;
+      }
       
-      console.log("Received response from Edge Function:", data);
+      console.log("Réponse de la fonction Edge:", data);
 
       if (data?.url) {
         window.location.href = data.url;
       } else {
-        throw new Error("URL de Stripe non reçue");
+        throw new Error("URL de redirection Stripe non reçue");
       }
     } catch (error) {
       console.error("Erreur Stripe:", error);
