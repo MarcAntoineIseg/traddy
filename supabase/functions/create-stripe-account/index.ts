@@ -27,11 +27,12 @@ serve(async (req) => {
     const stripe = new Stripe(stripeSecretKey, { apiVersion: "2023-10-16", httpClient: Stripe.createFetchHttpClient() });
     const supabase = createClient(supabaseAdminUrl, supabaseAdminKey);
 
-    // 📥 Récupération de l'utilisateur
+    // 📥 Récupération de l'utilisateur et de l'origine
     const { userId } = await req.json();
     if (!userId) throw new Error("User ID is required");
 
-    console.log(`Processing Stripe account for user: ${userId}`);
+    const origin = req.headers.get("origin") || "http://localhost:3000";
+    console.log(`Processing Stripe account for user: ${userId} from origin: ${origin}`);
 
     // 🔎 Vérification si un compte Stripe existe déjà
     const { data: profile, error: profileError } = await supabase
@@ -54,7 +55,7 @@ serve(async (req) => {
       });
     }
 
-    // 🏗️ Création d'un nouveau compte Stripe si l'utilisateur n'en a pas
+    // 🏗️ Création d'un nouveau compte Stripe
     const account = await stripe.accounts.create({
       type: "express",
       country: "FR",
@@ -64,7 +65,7 @@ serve(async (req) => {
 
     console.log(`New Stripe account created: ${account.id}`);
 
-    // 🔄 Mise à jour du profil utilisateur avec le compte Stripe
+    // 🔄 Mise à jour du profil utilisateur
     const { error: updateError } = await supabase
       .from("profiles")
       .update({ stripe_account_id: account.id })
@@ -72,17 +73,15 @@ serve(async (req) => {
 
     if (updateError) throw new Error("Failed to update Supabase profile with Stripe account ID");
 
-    console.log(`Stripe account ID saved for user: ${userId}`);
-
-    // 🔗 Génération du lien d'onboarding Stripe
+    // 🔗 Génération du lien d'onboarding avec URLs dynamiques
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      refresh_url: `${req.headers.get("origin")}/settings?retry=true`,
-      return_url: `${req.headers.get("origin")}/settings?success=true`,
+      refresh_url: `${origin}/settings?retry=true`,
+      return_url: `${origin}/settings?success=true`,
       type: "account_onboarding",
     });
 
-    console.log(`Onboarding link generated: ${accountLink.url}`);
+    console.log(`Onboarding link generated for origin ${origin}: ${accountLink.url}`);
 
     return new Response(JSON.stringify({ url: accountLink.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
