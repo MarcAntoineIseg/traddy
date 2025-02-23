@@ -26,18 +26,21 @@
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border;
+  html, body {
+    @apply h-full w-full m-0 p-0;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground min-h-screen;
+  }
+
+  #root {
+    @apply min-h-screen w-full m-0 p-0;
   }
 }
 
-@layer utilities {
+@layer components {
   .animated-border {
     @apply relative overflow-hidden rounded-lg border border-market-200 transition-all duration-300 hover:border-market-300;
   }
@@ -45,7 +48,9 @@
   .card-hover {
     @apply transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px];
   }
+}
 
+@layer utilities {
   .text-balance {
     text-wrap: balance;
   }

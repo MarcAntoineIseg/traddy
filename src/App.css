@@ -1,8 +1,16 @@
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
 }
 
 .logo {
@@ -11,9 +19,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -39,4 +49,20 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Styles globaux pour l'application */
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Style pour le contenu principal */
+.main-content {
+  flex: 1;
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
