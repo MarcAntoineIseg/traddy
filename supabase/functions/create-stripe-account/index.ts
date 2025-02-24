@@ -26,12 +26,12 @@ serve(async (req) => {
   }
 
   try {
-    const { userId, origin } = await req.json();
+    const { userId } = await req.json();
     if (!userId) throw new Error("User ID is required");
 
     console.log(`Processing Stripe Connect for user: ${userId}`);
 
-    // L'URL de redirection doit correspondre exactement à celle configurée dans Stripe
+    // L'URL de redirection exacte, sans paramètres de requête
     const returnUrl = 'https://zjbdgjfvjmhwflzauvki.lovable.dev/settings';
     console.log(`Return URL: ${returnUrl}`);
 
@@ -49,8 +49,8 @@ serve(async (req) => {
       console.log(`User already has a Stripe account: ${stripeAccountId}`);
       const accountLink = await stripe.accountLinks.create({
         account: stripeAccountId,
-        refresh_url: returnUrl + '?retry=true',
-        return_url: returnUrl + '?success=true',
+        refresh_url: returnUrl,
+        return_url: returnUrl,
         type: "account_onboarding",
       });
       return new Response(JSON.stringify({ url: accountLink.url }), {
@@ -99,8 +99,8 @@ serve(async (req) => {
     console.log("Generating onboarding link...");
     const accountLink = await stripe.accountLinks.create({
       account: stripeAccountId,
-      refresh_url: returnUrl + '?retry=true',
-      return_url: returnUrl + '?success=true',
+      refresh_url: returnUrl,
+      return_url: returnUrl,
       type: "account_onboarding",
     });
 
