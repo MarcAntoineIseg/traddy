@@ -56,6 +56,7 @@ const Settings = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         throw new Error("Utilisateur non authentifié");
+        console.log("User ID récupéré:", user?.id);
       }
 
       // Construction de l'origine pour les URLs de redirection
