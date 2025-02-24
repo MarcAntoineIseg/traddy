@@ -27,7 +27,7 @@ serve(async (req) => {
         transfers: { requested: true },
       },
       business_profile: {
-        url: "https://zjbdgjfvjmhwflzauvki.lovable.dev",
+        url: "https://app.traddy.fr",
       }
     });
 
@@ -36,8 +36,8 @@ serve(async (req) => {
     // Créer un lien d'onboarding
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      refresh_url: "https://zjbdgjfvjmhwflzauvki.lovable.dev/settings",
-      return_url: "https://zjbdgjfvjmhwflzauvki.lovable.dev/settings",
+      refresh_url: "https://app.traddy.fr/settings",
+      return_url: "https://app.traddy.fr/confirmation-inscription",
       type: "account_onboarding",
     });
 
