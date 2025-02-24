@@ -20,15 +20,15 @@ const UploadLeads = () => {
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      toast.error("Please select a file first");
+      toast.error("Veuillez sélectionner un fichier");
       return;
     }
     if (!gdprAccepted) {
-      toast.error("Please accept the GDPR compliance checkbox");
+      toast.error("Veuillez accepter la conformité RGPD");
       return;
     }
     if (!consentVerified) {
-      toast.error("Please verify that you have valid consent for all leads");
+      toast.error("Veuillez vérifier que vous avez un consentement valide pour tous les leads");
       return;
     }
 
@@ -38,31 +38,35 @@ const UploadLeads = () => {
       // Vérifier que l'utilisateur est connecté
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error("User not authenticated");
+        throw new Error("Utilisateur non authentifié");
       }
 
       const leadCount = await countCsvLines(selectedFile);
-      await sendToN8N(selectedFile);
       
-      const { error } = await supabase
+      // D'abord créer l'enregistrement dans Supabase
+      const { error: dbError } = await supabase
         .from('lead_files')
         .insert({
           file_name: selectedFile.name,
           lead_count: leadCount,
           status: 'processing',
-          user_id: user.id // Ajout de l'ID de l'utilisateur
+          user_id: user.id,
+          import_date: new Date().toISOString()
         });
 
-      if (error) {
-        console.error('Error inserting file record:', error);
-        throw error;
+      if (dbError) {
+        console.error('Error inserting file record:', dbError);
+        throw dbError;
       }
+
+      // Ensuite envoyer à N8N
+      await sendToN8N(selectedFile);
       
-      toast.success(`File uploaded successfully and sent for processing`);
+      toast.success(`Fichier téléchargé avec succès et envoyé pour traitement`);
       navigate("/my-leads");
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error("Failed to upload and process file. Please try again.");
+      toast.error("Échec du téléchargement et du traitement du fichier. Veuillez réessayer.");
     } finally {
       setIsUploading(false);
     }
@@ -73,7 +77,7 @@ const UploadLeads = () => {
       <div className="mb-8">
         <BackButton />
         <h1 className="text-2xl font-semibold text-market-900">Upload Leads</h1>
-        <p className="text-market-600">Upload your CSV file containing lead data</p>
+        <p className="text-market-600">Téléchargez votre fichier CSV contenant les données des leads</p>
       </div>
 
       <TemplateAlert />
@@ -96,14 +100,14 @@ const UploadLeads = () => {
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-market-600">
-                {selectedFile ? `Selected: ${selectedFile.name}` : "No file selected"}
+                {selectedFile ? `Sélectionné: ${selectedFile.name}` : "Aucun fichier sélectionné"}
               </p>
               <Button
                 onClick={handleUpload}
                 className="bg-market-600 hover:bg-market-700 text-white"
                 disabled={!selectedFile || isUploading}
               >
-                {isUploading ? "Uploading..." : "Upload Leads"}
+                {isUploading ? "Téléchargement..." : "Télécharger les leads"}
               </Button>
             </div>
           </div>
