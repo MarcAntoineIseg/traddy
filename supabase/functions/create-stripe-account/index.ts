@@ -1,53 +1,60 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@12.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
-// 🔑 Charger les clés API depuis Supabase
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+// Charger les clés API depuis Supabase
 const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
 const supabaseUrl = Deno.env.get("SUPABASE_URL");
-const supabaseAdminKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
 if (!stripeSecretKey) throw new Error("STRIPE_SECRET_KEY is missing");
-if (!supabaseUrl || !supabaseAdminKey) throw new Error("Supabase credentials are missing");
+if (!supabaseUrl || !supabaseServiceKey) throw new Error("Supabase credentials are missing");
 
 const stripe = new Stripe(stripeSecretKey, { apiVersion: "2023-10-16" });
-const supabase = createClient(supabaseUrl, supabaseAdminKey);
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "POST" }, status: 200 });
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { userId } = await req.json();
-    if (!userId) throw new Error("User ID is required");
+    const { userId, origin } = await req.json();
+    if (!userId || !origin) throw new Error("User ID and origin are required");
 
     console.log(`Processing Stripe Connect for user: ${userId}`);
+    console.log(`Origin URL: ${origin}`);
 
-    // 🔎 Vérifier si l'utilisateur a déjà un compte Stripe
-    const { data: profile, error: fetchError } = await supabase
+    // Vérifier si l'utilisateur a déjà un compte Stripe
+    const { data: profile } = await supabase
       .from("profiles")
       .select("stripe_account_id")
       .eq("id", userId)
       .single();
 
-    if (fetchError) throw new Error("Failed to fetch user profile");
-
     let stripeAccountId = profile?.stripe_account_id;
 
-    // 🔹 1️⃣ Si l'utilisateur a déjà un compte Stripe, on génère un lien de connexion
+    // Si l'utilisateur a déjà un compte Stripe
     if (stripeAccountId) {
       console.log(`User already has a Stripe account: ${stripeAccountId}`);
       const loginLink = await stripe.accounts.createLoginLink(stripeAccountId);
-      return Response.json({ url: loginLink.url });
+      return new Response(JSON.stringify({ url: loginLink.url }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    // 🔹 2️⃣ Sinon, on crée un compte Stripe Express pour lui
+    // Créer un nouveau compte Stripe Connect
+    console.log("Creating new Stripe account...");
     const account = await stripe.accounts.create({
       type: "express",
       country: "FR",
-      email: `user_${userId}@traddy.fr`, // Adaptable selon ton projet
-      business_type: "individual",
       capabilities: {
         card_payments: { requested: true },
         transfers: { requested: true },
@@ -55,30 +62,39 @@ serve(async (req) => {
     });
 
     stripeAccountId = account.id;
+    console.log(`New Stripe account created: ${stripeAccountId}`);
 
-    // 🔄 Mettre à jour Supabase avec l'ID du compte Stripe
+    // Mettre à jour le profil utilisateur avec l'ID du compte Stripe
     const { error: updateError } = await supabase
       .from("profiles")
       .update({ stripe_account_id: stripeAccountId })
       .eq("id", userId);
 
-    if (updateError) throw new Error("Failed to update user profile with Stripe Account ID");
+    if (updateError) {
+      console.error("Failed to update user profile:", updateError);
+      throw new Error("Failed to update user profile");
+    }
 
-    console.log(`New Stripe account created: ${stripeAccountId}`);
-
-    // 🔗 Générer un lien d'onboarding Stripe
+    // Générer le lien d'onboarding
+    console.log("Generating onboarding link...");
     const accountLink = await stripe.accountLinks.create({
       account: stripeAccountId,
-      return_url: "https://zjbdgjfvjmhwflzauvki.lovable.dev/settings?success=true",
-      refresh_url: "https://zjbdgjfvjmhwflzauvki.lovable.dev/settings?retry=true",
+      refresh_url: `${origin}/settings?retry=true`,
+      return_url: `${origin}/settings?success=true`,
       type: "account_onboarding",
     });
 
-    console.log(`Onboarding URL: ${accountLink.url}`);
+    console.log(`Onboarding URL generated: ${accountLink.url}`);
 
-    return Response.json({ url: accountLink.url });
+    return new Response(JSON.stringify({ url: accountLink.url }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+
   } catch (error) {
-    console.error("Stripe API Error:", error);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+    console.error("Error in create-stripe-account function:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
