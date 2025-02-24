@@ -27,10 +27,13 @@ serve(async (req) => {
 
   try {
     const { userId, origin } = await req.json();
-    if (!userId || !origin) throw new Error("User ID and origin are required");
+    if (!userId) throw new Error("User ID is required");
 
     console.log(`Processing Stripe Connect for user: ${userId}`);
-    console.log(`Origin URL: ${origin}`);
+
+    // L'URL de redirection doit correspondre exactement à celle configurée dans Stripe
+    const returnUrl = 'https://zjbdgjfvjmhwflzauvki.lovable.dev/settings';
+    console.log(`Return URL: ${returnUrl}`);
 
     // Vérifier si l'utilisateur a déjà un compte Stripe
     const { data: profile } = await supabase
@@ -46,8 +49,8 @@ serve(async (req) => {
       console.log(`User already has a Stripe account: ${stripeAccountId}`);
       const accountLink = await stripe.accountLinks.create({
         account: stripeAccountId,
-        refresh_url: `${origin}/settings?retry=true`,
-        return_url: `${origin}/settings?success=true`,
+        refresh_url: returnUrl + '?retry=true',
+        return_url: returnUrl + '?success=true',
         type: "account_onboarding",
       });
       return new Response(JSON.stringify({ url: accountLink.url }), {
@@ -67,7 +70,7 @@ serve(async (req) => {
       },
       business_profile: {
         mcc: "5734", // Computer Software Stores
-        url: origin,
+        url: returnUrl,
       },
       individual: {
         first_name: profile?.first_name || "",
@@ -96,8 +99,8 @@ serve(async (req) => {
     console.log("Generating onboarding link...");
     const accountLink = await stripe.accountLinks.create({
       account: stripeAccountId,
-      refresh_url: `${origin}/settings?retry=true`,
-      return_url: `${origin}/settings?success=true`,
+      refresh_url: returnUrl + '?retry=true',
+      return_url: returnUrl + '?success=true',
       type: "account_onboarding",
     });
 
