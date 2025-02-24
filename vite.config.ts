@@ -20,4 +20,11 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ['@emotion/react', '@emotion/styled'],
+  },
+  build: {
+    sourcemap: true,
+    chunkSizeWarningLimit: 1000,
+  },
 }));
