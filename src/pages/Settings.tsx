@@ -30,20 +30,43 @@ const Settings = () => {
     // Récupérer l'état du compte Stripe
     const fetchStripeStatus = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data } = await supabase
-            .from("profiles")
-            .select("stripe_account_id")
-            .eq("id", user.id)
-            .single();
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError) {
+          console.error("Erreur lors de la récupération de l'utilisateur:", userError);
+          throw userError;
+        }
 
-          if (data?.stripe_account_id) {
-            setStripeAccountId(data.stripe_account_id);
-          }
+        if (!user) {
+          console.error("Aucun utilisateur trouvé");
+          throw new Error("Utilisateur non authentifié");
+        }
+
+        console.log("Utilisateur récupéré:", user.id);
+
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("stripe_account_id")
+          .eq("id", user.id)
+          .single();
+
+        if (error) {
+          console.error("Erreur lors de la récupération du profil:", error);
+          throw error;
+        }
+
+        if (data?.stripe_account_id) {
+          console.log("Stripe account ID trouvé:", data.stripe_account_id);
+          setStripeAccountId(data.stripe_account_id);
+        } else {
+          console.log("Aucun Stripe account ID trouvé pour l'utilisateur");
         }
       } catch (error) {
         console.error("Erreur lors de la récupération du statut Stripe:", error);
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Impossible de récupérer votre statut Stripe",
+        });
       }
     };
 
@@ -53,11 +76,19 @@ const Settings = () => {
   const handleStripeSetup = async () => {
     try {
       setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error("Utilisateur non authentifié");
-        console.log("User ID récupéré:", user?.id);
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error("Erreur lors de la récupération de l'utilisateur:", userError);
+        throw userError;
       }
+
+      if (!user) {
+        console.error("Aucun utilisateur trouvé");
+        throw new Error("Utilisateur non authentifié");
+      }
+
+      console.log("User ID récupéré:", user.id);
 
       // Construction de l'origine pour les URLs de redirection
       const origin = window.location.origin;
