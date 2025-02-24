@@ -10,6 +10,7 @@ import {
   LogOut,
   FileSpreadsheet,
   Upload,
+  FileDown,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -22,6 +23,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "My Leads", href: "/my-leads", icon: FileSpreadsheet },
     { name: "Upload Leads", href: "/upload-leads", icon: Upload },
+    { name: "Transactions", href: "/transactions", icon: FileDown },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 

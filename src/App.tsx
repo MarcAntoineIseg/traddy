@@ -7,6 +7,7 @@ import MainLayout from "@/components/layout/MainLayout";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import UploadLeads from "@/pages/UploadLeads";
 import MyLeads from "@/pages/MyLeads";
+import Transactions from "@/pages/Transactions";
 import CreateAccount from "@/pages/CreateAccount";
 import Index from "@/pages/Index";
 import SellerConfirmation from "@/pages/SellerConfirmation";
@@ -48,6 +49,16 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <UploadLeads />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <Transactions />
               </MainLayout>
             </ProtectedRoute>
           }
