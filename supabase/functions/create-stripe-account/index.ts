@@ -35,7 +35,7 @@ serve(async (req) => {
     // Vérifier si l'utilisateur a déjà un compte Stripe
     const { data: profile } = await supabase
       .from("profiles")
-      .select("stripe_account_id")
+      .select("stripe_account_id, first_name, last_name")
       .eq("id", userId)
       .single();
 
@@ -44,8 +44,13 @@ serve(async (req) => {
     // Si l'utilisateur a déjà un compte Stripe
     if (stripeAccountId) {
       console.log(`User already has a Stripe account: ${stripeAccountId}`);
-      const loginLink = await stripe.accounts.createLoginLink(stripeAccountId);
-      return new Response(JSON.stringify({ url: loginLink.url }), {
+      const accountLink = await stripe.accountLinks.create({
+        account: stripeAccountId,
+        refresh_url: `${origin}/settings?retry=true`,
+        return_url: `${origin}/settings?success=true`,
+        type: "account_onboarding",
+      });
+      return new Response(JSON.stringify({ url: accountLink.url }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -55,9 +60,21 @@ serve(async (req) => {
     const account = await stripe.accounts.create({
       type: "express",
       country: "FR",
+      business_type: "individual",
       capabilities: {
         card_payments: { requested: true },
         transfers: { requested: true },
+      },
+      business_profile: {
+        mcc: "5734", // Computer Software Stores
+        url: origin,
+      },
+      individual: {
+        first_name: profile?.first_name || "",
+        last_name: profile?.last_name || "",
+      },
+      metadata: {
+        userId: userId,
       },
     });
 
