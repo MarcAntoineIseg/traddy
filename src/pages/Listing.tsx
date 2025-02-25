@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -84,6 +83,11 @@ const Listing = () => {
     toast.success("Lead purchase coming soon!");
   };
 
+  const blurText = (text: string | null) => {
+    if (!text) return "❌";
+    return "•".repeat(text.length);
+  };
+
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
@@ -164,36 +168,42 @@ const Listing = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Entreprise</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Intention</TableHead>
-                <TableHead>Prix</TableHead>
+                <TableHead>Prénom</TableHead>
+                <TableHead>Nom</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Phone</TableHead>
+                <TableHead>Pays</TableHead>
+                <TableHead>Ville</TableHead>
+                <TableHead>Age</TableHead>
+                <TableHead>Entreprise</TableHead>
+                <TableHead>Intention</TableHead>
                 <TableHead>Date de contact</TableHead>
+                <TableHead>Source</TableHead>
+                <TableHead>Prix</TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {leads.map((lead) => (
                 <TableRow key={lead.id}>
-                  <TableCell className="font-medium">{lead.Entreprise}</TableCell>
-                  <TableCell>{`${lead.Prénom || ''} ${lead.Nom || ''}`}</TableCell>
+                  <TableCell>{blurText(lead.Prénom)}</TableCell>
+                  <TableCell>{blurText(lead.Nom)}</TableCell>
+                  <TableCell>{blurText(lead.Email)}</TableCell>
+                  <TableCell>{blurText(lead.Phone)}</TableCell>
+                  <TableCell>{lead.Pays || "❌"}</TableCell>
+                  <TableCell>{lead.Ville || "❌"}</TableCell>
+                  <TableCell>{lead.Age?.toString() || "❌"}</TableCell>
+                  <TableCell>{lead.Entreprise || "❌"}</TableCell>
+                  <TableCell>{lead.Intention || "❌"}</TableCell>
                   <TableCell>
-                    {lead.Ville}
-                    {lead.Ville && lead.Pays ? ", " : ""}
-                    {lead.Pays}
+                    {lead.date_de_contact ? format(new Date(lead.date_de_contact), 'dd/MM/yyyy') : '❌'}
                   </TableCell>
-                  <TableCell>{lead.Intention}</TableCell>
+                  <TableCell>{lead.source_du_lead || "❌"}</TableCell>
                   <TableCell>
                     <div className="flex items-center">
                       <DollarSign className="h-4 w-4 text-gray-500 mr-1" />
                       {lead.Prix.toFixed(2)}
                     </div>
-                  </TableCell>
-                  <TableCell>{lead.Email}</TableCell>
-                  <TableCell>
-                    {lead.date_de_contact ? format(new Date(lead.date_de_contact), 'dd/MM/yyyy') : '-'}
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
