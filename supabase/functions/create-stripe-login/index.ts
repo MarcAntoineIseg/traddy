@@ -19,45 +19,58 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Starting create-stripe-login function');
+    
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
     );
     
-    // Vérifier l'authentification
+    console.log('Checking user authentication...');
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
     
-    if (authError || !user) {
-      throw new Error('Not authenticated');
+    if (authError) {
+      console.error('Authentication error:', authError);
+      throw new Error('Authentication failed');
+    }
+    
+    if (!user) {
+      console.error('No user found');
+      throw new Error('User not authenticated');
     }
 
-    // Récupérer le profil avec l'ID du compte Stripe
+    console.log('Fetching user profile...');
     const { data: profile, error: profileError } = await supabaseClient
       .from('profiles')
       .select('stripe_account_id')
       .eq('id', user.id)
-      .single();
-
-    console.log('Profile data:', profile);
+      .maybeSingle();
 
     if (profileError) {
+      console.error('Profile fetch error:', profileError);
       throw new Error(`Error fetching profile: ${profileError.message}`);
     }
 
+    console.log('Profile data:', profile);
+
     if (!profile?.stripe_account_id) {
+      console.error('No Stripe account ID found for user');
       throw new Error('No Stripe account found for this user');
     }
 
-    // Créer le lien de connexion au dashboard
+    console.log('Creating Stripe login link...');
     const loginLink = await stripe.accounts.createLoginLink(
       profile.stripe_account_id,
       { redirect_url: 'https://app.traddy.fr/settings' }
     );
 
     if (!loginLink?.url) {
+      console.error('No login link URL returned from Stripe');
       throw new Error('Failed to create Stripe login link');
     }
+
+    console.log('Login link created successfully:', loginLink.url);
 
     return new Response(
       JSON.stringify({ url: loginLink.url }),
