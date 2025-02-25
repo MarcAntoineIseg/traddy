@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
-import { DollarSign, Filter, ArrowUpDown } from "lucide-react";
+import { Euro, Filter, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -217,8 +217,8 @@ const Listing = () => {
                   <TableCell>{lead.source_du_lead || "❌"}</TableCell>
                   <TableCell>
                     <div className="flex items-center">
-                      <DollarSign className="h-4 w-4 text-gray-500 mr-1" />
-                      {lead.Prix.toFixed(2)}
+                      <Euro className="h-4 w-4 text-gray-500 mr-1" />
+                      {lead.Prix.toFixed(2)} €
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
