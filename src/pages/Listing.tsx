@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
-import { DollarSign, Filter } from "lucide-react";
+import { DollarSign, Filter, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -61,7 +61,7 @@ const Listing = () => {
 
       // Appliquer le tri par date de contact si activé
       if (filters.sortByDate) {
-        query = query.order('date_de_contact', { ascending: false, nullsLast: true });
+        query = query.order('date_de_contact', { ascending: false, nullsFirst: false });
       } else {
         query = query.order("created_at", { ascending: false });
       }
@@ -151,28 +151,16 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div className="flex gap-2">
-              <Button
-                variant={filters.sortByDate ? "default" : "outline"}
-                onClick={() =>
-                  setFilters((prev) => ({ ...prev, sortByDate: !prev.sortByDate }))
-                }
-                className="whitespace-nowrap"
-              >
-                Trier par date de contact
-              </Button>
-
-              <Button
-                variant="outline"
-                onClick={() =>
-                  setFilters({ ville: "", pays: "", intention: "all", sortByDate: false })
-                }
-                className="flex-none"
-              >
-                <Filter className="mr-2 h-4 w-4" />
-                Effacer les filtres
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              onClick={() =>
+                setFilters({ ville: "", pays: "", intention: "all", sortByDate: false })
+              }
+              className="flex-none"
+            >
+              <Filter className="mr-2 h-4 w-4" />
+              Effacer les filtres
+            </Button>
           </div>
         </Card>
       </div>
@@ -197,7 +185,15 @@ const Listing = () => {
                 <TableHead>Age</TableHead>
                 <TableHead>Entreprise</TableHead>
                 <TableHead>Intention</TableHead>
-                <TableHead>Date de contact</TableHead>
+                <TableHead>
+                  <div 
+                    className="flex items-center cursor-pointer"
+                    onClick={() => setFilters(prev => ({ ...prev, sortByDate: !prev.sortByDate }))}
+                  >
+                    Date de contact 
+                    <ArrowUpDown className={`ml-2 h-4 w-4 transition-colors ${filters.sortByDate ? "text-primary" : "text-gray-400"}`} />
+                  </div>
+                </TableHead>
                 <TableHead>Source</TableHead>
                 <TableHead>Prix</TableHead>
                 <TableHead className="text-right">Action</TableHead>
