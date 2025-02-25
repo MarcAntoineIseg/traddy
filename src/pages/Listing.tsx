@@ -25,25 +25,31 @@ import { toast } from "sonner";
 
 type Lead = {
   id: string;
-  industry: string;
-  company_name: string;
-  contact_name: string;
-  city: string | null;
-  country: string | null;
-  intention: string | null;
-  Prix: number; // Modifié de price à Prix pour correspondre à la colonne dans la base de données
+  Entreprise: string | null;
+  Nom: string | null;
+  Prénom: string | null;
+  Ville: string | null;
+  Pays: string | null;
+  Intention: string | null;
+  Prix: number;
   created_at: string;
+  Email: string | null;
+  Phone: string | null;
+  Age: number | null;
+  date_de_contact: string | null;
+  source_du_lead: string | null;
+  status: string | null;
+  lead_file_id: string | null;
 };
 
 const Listing = () => {
   const [filters, setFilters] = useState({
-    industry: "all",
-    city: "",
-    country: "",
+    ville: "",
+    pays: "",
     intention: "all",
   });
 
-  const { data: leads, isLoading } = useQuery({
+  const { data: leads, isLoading } = useQuery<Lead[]>({
     queryKey: ["leads", filters],
     queryFn: async () => {
       let query = supabase
@@ -52,17 +58,14 @@ const Listing = () => {
         .eq("status", "available")
         .order("created_at", { ascending: false });
 
-      if (filters.industry && filters.industry !== "all") {
-        query = query.eq("industry", filters.industry);
+      if (filters.ville) {
+        query = query.ilike("Ville", `%${filters.ville}%`);
       }
-      if (filters.city) {
-        query = query.ilike("city", `%${filters.city}%`);
-      }
-      if (filters.country) {
-        query = query.ilike("country", `%${filters.country}%`);
+      if (filters.pays) {
+        query = query.ilike("Pays", `%${filters.pays}%`);
       }
       if (filters.intention && filters.intention !== "all") {
-        query = query.eq("intention", filters.intention);
+        query = query.eq("Intention", filters.intention);
       }
 
       const { data, error } = await query;
@@ -72,7 +75,7 @@ const Listing = () => {
         throw error;
       }
 
-      return data as Lead[];
+      return data;
     },
   });
 
@@ -83,55 +86,32 @@ const Listing = () => {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-4">Available Leads</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-4">Leads Disponibles</h1>
         
         <Card className="p-4">
           <div className="flex flex-wrap gap-4 items-end">
             <div className="flex-1 min-w-[200px]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Industry
-              </label>
-              <Select
-                value={filters.industry}
-                onValueChange={(value) =>
-                  setFilters((prev) => ({ ...prev, industry: value }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select industry" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Industries</SelectItem>
-                  <SelectItem value="technology">Technology</SelectItem>
-                  <SelectItem value="finance">Finance</SelectItem>
-                  <SelectItem value="healthcare">Healthcare</SelectItem>
-                  <SelectItem value="retail">Retail</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                City
+                Ville
               </label>
               <Input
-                placeholder="Filter by city"
-                value={filters.city}
+                placeholder="Filtrer par ville"
+                value={filters.ville}
                 onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, city: e.target.value }))
+                  setFilters((prev) => ({ ...prev, ville: e.target.value }))
                 }
               />
             </div>
 
             <div className="flex-1 min-w-[200px]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Country
+                Pays
               </label>
               <Input
-                placeholder="Filter by country"
-                value={filters.country}
+                placeholder="Filtrer par pays"
+                value={filters.pays}
                 onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, country: e.target.value }))
+                  setFilters((prev) => ({ ...prev, pays: e.target.value }))
                 }
               />
             </div>
@@ -147,13 +127,13 @@ const Listing = () => {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select intention" />
+                  <SelectValue placeholder="Sélectionner l'intention" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Intentions</SelectItem>
-                  <SelectItem value="buy">Ready to Buy</SelectItem>
-                  <SelectItem value="explore">Exploring Options</SelectItem>
-                  <SelectItem value="information">Seeking Information</SelectItem>
+                  <SelectItem value="all">Toutes les intentions</SelectItem>
+                  <SelectItem value="buy">Prêt à acheter</SelectItem>
+                  <SelectItem value="explore">En exploration</SelectItem>
+                  <SelectItem value="information">Recherche d'information</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -161,12 +141,12 @@ const Listing = () => {
             <Button
               variant="outline"
               onClick={() =>
-                setFilters({ industry: "all", city: "", country: "", intention: "all" })
+                setFilters({ ville: "", pays: "", intention: "all" })
               }
               className="flex-none"
             >
               <Filter className="mr-2 h-4 w-4" />
-              Clear Filters
+              Effacer les filtres
             </Button>
           </div>
         </Card>
@@ -174,49 +154,49 @@ const Listing = () => {
 
       <div className="bg-white rounded-lg shadow">
         {isLoading ? (
-          <div className="p-8 text-center">Loading leads...</div>
+          <div className="p-8 text-center">Chargement des leads...</div>
         ) : !leads?.length ? (
           <div className="p-8 text-center text-gray-500">
-            No leads found matching your criteria
+            Aucun lead trouvé avec ces critères
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Company</TableHead>
+                <TableHead>Entreprise</TableHead>
                 <TableHead>Contact</TableHead>
-                <TableHead>Industry</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Intention</TableHead>
-                <TableHead>Price</TableHead>
+                <TableHead>Prix</TableHead>
+                <TableHead>Email</TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {leads.map((lead) => (
                 <TableRow key={lead.id}>
-                  <TableCell className="font-medium">{lead.company_name}</TableCell>
-                  <TableCell>{lead.contact_name}</TableCell>
-                  <TableCell>{lead.industry}</TableCell>
+                  <TableCell className="font-medium">{lead.Entreprise}</TableCell>
+                  <TableCell>{`${lead.Prénom || ''} ${lead.Nom || ''}`}</TableCell>
                   <TableCell>
-                    {lead.city}
-                    {lead.city && lead.country ? ", " : ""}
-                    {lead.country}
+                    {lead.Ville}
+                    {lead.Ville && lead.Pays ? ", " : ""}
+                    {lead.Pays}
                   </TableCell>
-                  <TableCell>{lead.intention}</TableCell>
+                  <TableCell>{lead.Intention}</TableCell>
                   <TableCell>
                     <div className="flex items-center">
                       <DollarSign className="h-4 w-4 text-gray-500 mr-1" />
-                      {lead.Prix.toFixed(2)} {/* Modifié de lead.price à lead.Prix */}
+                      {lead.Prix.toFixed(2)}
                     </div>
                   </TableCell>
+                  <TableCell>{lead.Email}</TableCell>
                   <TableCell className="text-right">
                     <Button
                       size="sm"
                       onClick={() => handleBuyLead(lead.id)}
                       className="bg-market-600 hover:bg-market-700 text-white"
                     >
-                      Buy Lead
+                      Acheter
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -230,4 +210,3 @@ const Listing = () => {
 };
 
 export default Listing;
-
