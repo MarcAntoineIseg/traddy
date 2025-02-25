@@ -37,10 +37,10 @@ type Lead = {
 
 const Listing = () => {
   const [filters, setFilters] = useState({
-    industry: "",
+    industry: "all",
     city: "",
     country: "",
-    intention: "",
+    intention: "all",
   });
 
   const { data: leads, isLoading } = useQuery({
@@ -52,7 +52,7 @@ const Listing = () => {
         .eq("status", "available")
         .order("created_at", { ascending: false });
 
-      if (filters.industry) {
+      if (filters.industry && filters.industry !== "all") {
         query = query.eq("industry", filters.industry);
       }
       if (filters.city) {
@@ -61,7 +61,7 @@ const Listing = () => {
       if (filters.country) {
         query = query.ilike("country", `%${filters.country}%`);
       }
-      if (filters.intention) {
+      if (filters.intention && filters.intention !== "all") {
         query = query.eq("intention", filters.intention);
       }
 
@@ -101,7 +101,7 @@ const Listing = () => {
                   <SelectValue placeholder="Select industry" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Industries</SelectItem>
+                  <SelectItem value="all">All Industries</SelectItem>
                   <SelectItem value="technology">Technology</SelectItem>
                   <SelectItem value="finance">Finance</SelectItem>
                   <SelectItem value="healthcare">Healthcare</SelectItem>
@@ -150,7 +150,7 @@ const Listing = () => {
                   <SelectValue placeholder="Select intention" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Intentions</SelectItem>
+                  <SelectItem value="all">All Intentions</SelectItem>
                   <SelectItem value="buy">Ready to Buy</SelectItem>
                   <SelectItem value="explore">Exploring Options</SelectItem>
                   <SelectItem value="information">Seeking Information</SelectItem>
@@ -161,7 +161,7 @@ const Listing = () => {
             <Button
               variant="outline"
               onClick={() =>
-                setFilters({ industry: "", city: "", country: "", intention: "" })
+                setFilters({ industry: "all", city: "", country: "", intention: "all" })
               }
               className="flex-none"
             >
