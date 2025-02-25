@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,16 @@ import { Card } from "@/components/ui/card";
 import { Filter, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Lead = {
   id: string;
@@ -40,6 +50,7 @@ type Lead = {
   source_du_lead: string | null;
   status: string | null;
   lead_file_id: string | null;
+  user_id: string | null;
 };
 
 type RangeFilter = {
@@ -65,7 +76,9 @@ const Listing = () => {
     sortByDate: false,
   });
 
-  const { data: leads, isLoading } = useQuery<Lead[]>({
+  const queryClient = useQueryClient();
+
+  const { data: leads, isLoading: loadingLeads } = useQuery<Lead[]>({
     queryKey: ["leads", filters],
     queryFn: async () => {
       let query = supabase
@@ -143,8 +156,52 @@ const Listing = () => {
     };
   }, [leads]);
 
-  const handleBuyLead = async (leadId: string) => {
-    toast.success("Lead purchase coming soon!");
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleBuyLead = async (lead: Lead) => {
+    setSelectedLead(lead);
+  };
+
+  const handleConfirmPurchase = async () => {
+    if (!selectedLead) return;
+
+    try {
+      setIsLoading(true);
+
+      // 1. Créer une transaction
+      const { data: transaction, error: transactionError } = await supabase
+        .from('transactions')
+        .insert({
+          amount: selectedLead.Prix,
+          lead_file_id: selectedLead.lead_file_id,
+          seller_id: selectedLead.user_id,
+        })
+        .select('*')
+        .single();
+
+      if (transactionError) throw transactionError;
+
+      // 2. Mettre à jour le statut du lead
+      const { error: updateError } = await supabase
+        .from('leads')
+        .update({ status: 'sold' })
+        .eq('id', selectedLead.id);
+
+      if (updateError) throw updateError;
+
+      toast.success("Lead acheté avec succès !");
+      
+      // Rafraîchir les leads
+      await queryClient.invalidateQueries({ queryKey: ["leads"] });
+
+    } catch (error: any) {
+      toast.error("Erreur lors de l'achat du lead");
+      console.error("Erreur:", error);
+    } finally {
+      setIsLoading(false);
+      setSelectedLead(null);
+    }
   };
 
   const blurText = (text: string | null) => {
@@ -390,7 +447,7 @@ const Listing = () => {
       </div>
 
       <div className="bg-white rounded-lg shadow">
-        {isLoading ? (
+        {loadingLeads ? (
           <div className="p-8 text-center">Chargement des leads...</div>
         ) : !leads?.length ? (
           <div className="p-8 text-center text-gray-500">
@@ -441,13 +498,36 @@ const Listing = () => {
                   <TableCell>{lead.source_du_lead || "❌"}</TableCell>
                   <TableCell>{`${lead.Prix.toFixed(2)} €`}</TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      size="sm"
-                      onClick={() => handleBuyLead(lead.id)}
-                      className="bg-market-600 hover:bg-market-700 text-white"
-                    >
-                      Acheter
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          size="sm"
+                          onClick={() => handleBuyLead(lead)}
+                          className="bg-market-600 hover:bg-market-700 text-white"
+                        >
+                          Acheter
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Confirmer l'achat</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Vous êtes sur le point d'acheter un lead pour {lead.Prix.toFixed(2)} €.
+                            Cette action est irréversible.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Annuler</AlertDialogCancel>
+                          <Button
+                            variant="default"
+                            onClick={handleConfirmPurchase}
+                            disabled={isLoading}
+                          >
+                            {isLoading ? "Traitement..." : "Confirmer l'achat"}
+                          </Button>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))}
