@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -43,11 +42,26 @@ type Lead = {
   lead_file_id: string | null;
 };
 
+type RangeFilter = {
+  min: number | null;
+  max: number | null;
+};
+
+type DateRangeFilter = {
+  start: string | null;
+  end: string | null;
+};
+
 const Listing = () => {
   const [filters, setFilters] = useState({
-    ville: "",
-    pays: "",
+    ville: "all",
+    pays: "all",
+    entreprise: "all",
     intention: "all",
+    source: "all",
+    age: { min: null, max: null } as RangeFilter,
+    prix: { min: null, max: null } as RangeFilter,
+    dateContact: { start: null, end: null } as DateRangeFilter,
     sortByDate: false,
   });
 
@@ -59,21 +73,45 @@ const Listing = () => {
         .select("*")
         .eq("status", "available");
 
-      // Appliquer le tri par date de contact si activé
       if (filters.sortByDate) {
         query = query.order('date_de_contact', { ascending: false, nullsFirst: false });
       } else {
         query = query.order("created_at", { ascending: false });
       }
 
-      if (filters.ville) {
-        query = query.ilike("Ville", `%${filters.ville}%`);
+      if (filters.ville !== "all") {
+        query = query.eq("Ville", filters.ville);
       }
-      if (filters.pays) {
-        query = query.ilike("Pays", `%${filters.pays}%`);
+      if (filters.pays !== "all") {
+        query = query.eq("Pays", filters.pays);
       }
-      if (filters.intention && filters.intention !== "all") {
+      if (filters.entreprise !== "all") {
+        query = query.eq("Entreprise", filters.entreprise);
+      }
+      if (filters.intention !== "all") {
         query = query.eq("Intention", filters.intention);
+      }
+      if (filters.source !== "all") {
+        query = query.eq("source_du_lead", filters.source);
+      }
+      
+      if (filters.age.min !== null) {
+        query = query.gte("Age", filters.age.min);
+      }
+      if (filters.age.max !== null) {
+        query = query.lte("Age", filters.age.max);
+      }
+      if (filters.prix.min !== null) {
+        query = query.gte("Prix", filters.prix.min);
+      }
+      if (filters.prix.max !== null) {
+        query = query.lte("Prix", filters.prix.max);
+      }
+      if (filters.dateContact.start) {
+        query = query.gte("date_de_contact", filters.dateContact.start);
+      }
+      if (filters.dateContact.end) {
+        query = query.lte("date_de_contact", filters.dateContact.end);
       }
 
       const { data, error } = await query;
@@ -86,6 +124,24 @@ const Listing = () => {
       return data;
     },
   });
+
+  const uniqueValues = useMemo(() => {
+    if (!leads) return {
+      villes: [],
+      pays: [],
+      entreprises: [],
+      intentions: [],
+      sources: []
+    };
+
+    return {
+      villes: Array.from(new Set(leads.map(lead => lead.Ville).filter(Boolean))),
+      pays: Array.from(new Set(leads.map(lead => lead.Pays).filter(Boolean))),
+      entreprises: Array.from(new Set(leads.map(lead => lead.Entreprise).filter(Boolean))),
+      intentions: Array.from(new Set(leads.map(lead => lead.Intention).filter(Boolean))),
+      sources: Array.from(new Set(leads.map(lead => lead.source_du_lead).filter(Boolean)))
+    };
+  }, [leads]);
 
   const handleBuyLead = async (leadId: string) => {
     toast.success("Lead purchase coming soon!");
@@ -102,34 +158,74 @@ const Listing = () => {
         <h1 className="text-2xl font-semibold text-gray-900 mb-4">Leads Disponibles</h1>
         
         <Card className="p-4">
-          <div className="flex flex-wrap gap-4 items-end">
-            <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Ville
-              </label>
-              <Input
-                placeholder="Filtrer par ville"
-                value={filters.ville}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, ville: e.target.value }))
-                }
-              />
-            </div>
-
-            <div className="flex-1 min-w-[200px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Pays
               </label>
-              <Input
-                placeholder="Filtrer par pays"
+              <Select
                 value={filters.pays}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, pays: e.target.value }))
+                onValueChange={(value) =>
+                  setFilters((prev) => ({ ...prev, pays: value }))
                 }
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner un pays" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les pays</SelectItem>
+                  {uniqueValues.pays.map((pays) => (
+                    <SelectItem key={pays} value={pays}>{pays}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="flex-1 min-w-[200px]">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Ville
+              </label>
+              <Select
+                value={filters.ville}
+                onValueChange={(value) =>
+                  setFilters((prev) => ({ ...prev, ville: value }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner une ville" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Toutes les villes</SelectItem>
+                  {uniqueValues.villes.map((ville) => (
+                    <SelectItem key={ville} value={ville}>{ville}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Entreprise
+              </label>
+              <Select
+                value={filters.entreprise}
+                onValueChange={(value) =>
+                  setFilters((prev) => ({ ...prev, entreprise: value }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner une entreprise" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Toutes les entreprises</SelectItem>
+                  {uniqueValues.entreprises.map((entreprise) => (
+                    <SelectItem key={entreprise} value={entreprise}>{entreprise}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Intention
               </label>
@@ -144,23 +240,151 @@ const Listing = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Toutes les intentions</SelectItem>
-                  <SelectItem value="buy">Prêt à acheter</SelectItem>
-                  <SelectItem value="explore">En exploration</SelectItem>
-                  <SelectItem value="information">Recherche d'information</SelectItem>
+                  {uniqueValues.intentions.map((intention) => (
+                    <SelectItem key={intention} value={intention}>{intention}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <Button
-              variant="outline"
-              onClick={() =>
-                setFilters({ ville: "", pays: "", intention: "all", sortByDate: false })
-              }
-              className="flex-none"
-            >
-              <Filter className="mr-2 h-4 w-4" />
-              Effacer les filtres
-            </Button>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Source
+              </label>
+              <Select
+                value={filters.source}
+                onValueChange={(value) =>
+                  setFilters((prev) => ({ ...prev, source: value }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner une source" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Toutes les sources</SelectItem>
+                  {uniqueValues.sources.map((source) => (
+                    <SelectItem key={source} value={source}>{source}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Âge
+              </label>
+              <div className="flex gap-2">
+                <Input
+                  type="number"
+                  placeholder="Min"
+                  value={filters.age.min ?? ""}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      age: { ...prev.age, min: e.target.value ? Number(e.target.value) : null }
+                    }))
+                  }
+                  className="w-full"
+                />
+                <Input
+                  type="number"
+                  placeholder="Max"
+                  value={filters.age.max ?? ""}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      age: { ...prev.age, max: e.target.value ? Number(e.target.value) : null }
+                    }))
+                  }
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Prix (€)
+              </label>
+              <div className="flex gap-2">
+                <Input
+                  type="number"
+                  placeholder="Min"
+                  value={filters.prix.min ?? ""}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      prix: { ...prev.prix, min: e.target.value ? Number(e.target.value) : null }
+                    }))
+                  }
+                  className="w-full"
+                />
+                <Input
+                  type="number"
+                  placeholder="Max"
+                  value={filters.prix.max ?? ""}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      prix: { ...prev.prix, max: e.target.value ? Number(e.target.value) : null }
+                    }))
+                  }
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Date de contact
+              </label>
+              <div className="flex gap-2">
+                <Input
+                  type="date"
+                  value={filters.dateContact.start ?? ""}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      dateContact: { ...prev.dateContact, start: e.target.value || null }
+                    }))
+                  }
+                  className="w-full"
+                />
+                <Input
+                  type="date"
+                  value={filters.dateContact.end ?? ""}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      dateContact: { ...prev.dateContact, end: e.target.value || null }
+                    }))
+                  }
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-end">
+              <Button
+                variant="outline"
+                onClick={() =>
+                  setFilters({
+                    ville: "all",
+                    pays: "all",
+                    entreprise: "all",
+                    intention: "all",
+                    source: "all",
+                    age: { min: null, max: null },
+                    prix: { min: null, max: null },
+                    dateContact: { start: null, end: null },
+                    sortByDate: false,
+                  })
+                }
+                className="w-full"
+              >
+                <Filter className="mr-2 h-4 w-4" />
+                Effacer les filtres
+              </Button>
+            </div>
           </div>
         </Card>
       </div>
