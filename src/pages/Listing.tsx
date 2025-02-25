@@ -22,6 +22,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { DollarSign, Filter } from "lucide-react";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 type Lead = {
   id: string;
@@ -169,6 +170,7 @@ const Listing = () => {
                 <TableHead>Intention</TableHead>
                 <TableHead>Prix</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Date de contact</TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -190,6 +192,9 @@ const Listing = () => {
                     </div>
                   </TableCell>
                   <TableCell>{lead.Email}</TableCell>
+                  <TableCell>
+                    {lead.date_de_contact ? format(new Date(lead.date_de_contact), 'dd/MM/yyyy') : '-'}
+                  </TableCell>
                   <TableCell className="text-right">
                     <Button
                       size="sm"
