@@ -42,6 +42,62 @@ export type Database = {
         }
         Relationships: []
       }
+      leads: {
+        Row: {
+          city: string | null
+          company_name: string
+          contact_name: string
+          country: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          industry: string
+          intention: string | null
+          lead_file_id: string | null
+          phone: string | null
+          price: number
+          status: string | null
+        }
+        Insert: {
+          city?: string | null
+          company_name: string
+          contact_name: string
+          country?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          industry: string
+          intention?: string | null
+          lead_file_id?: string | null
+          phone?: string | null
+          price?: number
+          status?: string | null
+        }
+        Update: {
+          city?: string | null
+          company_name?: string
+          contact_name?: string
+          country?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          industry?: string
+          intention?: string | null
+          lead_file_id?: string | null
+          phone?: string | null
+          price?: number
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_lead_file_id_fkey"
+            columns: ["lead_file_id"]
+            isOneToOne: false
+            referencedRelation: "lead_files"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string

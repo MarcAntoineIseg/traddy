@@ -12,6 +12,7 @@ import CreateAccount from "@/pages/CreateAccount";
 import Index from "@/pages/Index";
 import SellerConfirmation from "@/pages/SellerConfirmation";
 import InscriptionConfirmation from "@/pages/InscriptionConfirmation";
+import Listing from "@/pages/Listing";
 
 import "./App.css";
 
@@ -23,6 +24,14 @@ function App() {
         <Route path="/create-account" element={<CreateAccount />} />
         <Route path="/inscrit-vendeur" element={<SellerConfirmation />} />
         <Route path="/confirmation-inscription" element={<InscriptionConfirmation />} />
+        <Route
+          path="/listing"
+          element={
+            <MainLayout>
+              <Listing />
+            </MainLayout>
+          }
+        />
         <Route
           path="/dashboard"
           element={
