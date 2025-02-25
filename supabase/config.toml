@@ -1,4 +1,8 @@
 
 project_id = "zjbdgjfvjmhwflzauvki"
+
 [functions.create-stripe-account]
+verify_jwt = true
+
+[functions.create-stripe-login]
 verify_jwt = true
