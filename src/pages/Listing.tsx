@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
-import { Euro, Filter, ArrowUpDown } from "lucide-react";
+import { Filter, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -215,12 +215,7 @@ const Listing = () => {
                     {lead.date_de_contact ? format(new Date(lead.date_de_contact), 'dd/MM/yyyy') : '❌'}
                   </TableCell>
                   <TableCell>{lead.source_du_lead || "❌"}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <Euro className="h-4 w-4 text-gray-500 mr-1" />
-                      {lead.Prix.toFixed(2)} €
-                    </div>
-                  </TableCell>
+                  <TableCell>{`${lead.Prix.toFixed(2)} €`}</TableCell>
                   <TableCell className="text-right">
                     <Button
                       size="sm"
