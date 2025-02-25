@@ -44,49 +44,58 @@ export type Database = {
       }
       leads: {
         Row: {
-          city: string | null
-          company_name: string
-          contact_name: string
-          country: string | null
+          Age: number | null
           created_at: string | null
-          email: string | null
+          date_de_contact: string | null
+          Email: string | null
+          Entreprise: string | null
           id: string
-          industry: string
-          intention: string | null
+          Intention: string | null
           lead_file_id: string | null
-          phone: string | null
-          price: number
+          Nom: string | null
+          Pays: string | null
+          Phone: string | null
+          Prénom: string | null
+          Prix: number
+          source_du_lead: string | null
           status: string | null
+          Ville: string | null
         }
         Insert: {
-          city?: string | null
-          company_name: string
-          contact_name: string
-          country?: string | null
+          Age?: number | null
           created_at?: string | null
-          email?: string | null
+          date_de_contact?: string | null
+          Email?: string | null
+          Entreprise?: string | null
           id?: string
-          industry: string
-          intention?: string | null
+          Intention?: string | null
           lead_file_id?: string | null
-          phone?: string | null
-          price?: number
+          Nom?: string | null
+          Pays?: string | null
+          Phone?: string | null
+          Prénom?: string | null
+          Prix?: number
+          source_du_lead?: string | null
           status?: string | null
+          Ville?: string | null
         }
         Update: {
-          city?: string | null
-          company_name?: string
-          contact_name?: string
-          country?: string | null
+          Age?: number | null
           created_at?: string | null
-          email?: string | null
+          date_de_contact?: string | null
+          Email?: string | null
+          Entreprise?: string | null
           id?: string
-          industry?: string
-          intention?: string | null
+          Intention?: string | null
           lead_file_id?: string | null
-          phone?: string | null
-          price?: number
+          Nom?: string | null
+          Pays?: string | null
+          Phone?: string | null
+          Prénom?: string | null
+          Prix?: number
+          source_du_lead?: string | null
           status?: string | null
+          Ville?: string | null
         }
         Relationships: [
           {

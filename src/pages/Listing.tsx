@@ -31,7 +31,7 @@ type Lead = {
   city: string | null;
   country: string | null;
   intention: string | null;
-  price: number;
+  Prix: number; // Modifié de price à Prix pour correspondre à la colonne dans la base de données
   created_at: string;
 };
 
@@ -207,7 +207,7 @@ const Listing = () => {
                   <TableCell>
                     <div className="flex items-center">
                       <DollarSign className="h-4 w-4 text-gray-500 mr-1" />
-                      {lead.price.toFixed(2)}
+                      {lead.Prix.toFixed(2)} {/* Modifié de lead.price à lead.Prix */}
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
@@ -230,3 +230,4 @@ const Listing = () => {
 };
 
 export default Listing;
+
