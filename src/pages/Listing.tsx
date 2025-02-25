@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -47,6 +48,7 @@ const Listing = () => {
     ville: "",
     pays: "",
     intention: "all",
+    sortByDate: false,
   });
 
   const { data: leads, isLoading } = useQuery<Lead[]>({
@@ -55,8 +57,14 @@ const Listing = () => {
       let query = supabase
         .from("leads")
         .select("*")
-        .eq("status", "available")
-        .order("created_at", { ascending: false });
+        .eq("status", "available");
+
+      // Appliquer le tri par date de contact si activé
+      if (filters.sortByDate) {
+        query = query.order('date_de_contact', { ascending: false, nullsLast: true });
+      } else {
+        query = query.order("created_at", { ascending: false });
+      }
 
       if (filters.ville) {
         query = query.ilike("Ville", `%${filters.ville}%`);
@@ -143,16 +151,28 @@ const Listing = () => {
               </Select>
             </div>
 
-            <Button
-              variant="outline"
-              onClick={() =>
-                setFilters({ ville: "", pays: "", intention: "all" })
-              }
-              className="flex-none"
-            >
-              <Filter className="mr-2 h-4 w-4" />
-              Effacer les filtres
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant={filters.sortByDate ? "default" : "outline"}
+                onClick={() =>
+                  setFilters((prev) => ({ ...prev, sortByDate: !prev.sortByDate }))
+                }
+                className="whitespace-nowrap"
+              >
+                Trier par date de contact
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() =>
+                  setFilters({ ville: "", pays: "", intention: "all", sortByDate: false })
+                }
+                className="flex-none"
+              >
+                <Filter className="mr-2 h-4 w-4" />
+                Effacer les filtres
+              </Button>
+            </div>
           </div>
         </Card>
       </div>
