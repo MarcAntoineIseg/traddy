@@ -15,16 +15,34 @@ export const DashboardOnboarding = () => {
       content: (
         <div className="text-center">
           <h2 className="text-xl font-semibold mb-2">Bienvenue sur Traddy! 👋</h2>
-          <p>Nous allons vous guider pour vendre vos premiers leads en quelques étapes simples.</p>
+          <p>Suivez ce guide pour commencer à vendre vos leads en quelques étapes simples.</p>
         </div>
       ),
     },
     {
-      target: ".upload-leads-button",
+      target: "a[href='/settings']",
       content: (
         <div>
-          <h3 className="font-semibold mb-2">Commencez par vendre vos leads</h3>
-          <p>Cliquez ici pour télécharger votre premier fichier de leads à vendre.</p>
+          <h3 className="font-semibold mb-2">1. Configurez votre compte Stripe</h3>
+          <p>Pour recevoir vos paiements, commencez par configurer votre compte Stripe dans les paramètres.</p>
+        </div>
+      ),
+    },
+    {
+      target: "a[href='/upload-leads']",
+      content: (
+        <div>
+          <h3 className="font-semibold mb-2">2. Mettez en vente vos leads</h3>
+          <p>Une fois votre compte Stripe configuré, vous pourrez télécharger vos premiers leads à vendre.</p>
+        </div>
+      ),
+    },
+    {
+      target: "a[href='/my-leads']",
+      content: (
+        <div>
+          <h3 className="font-semibold mb-2">3. Suivi de vos imports</h3>
+          <p>Retrouvez ici tous vos fichiers importés. Notre équipe les analysera et mettra en vente les leads qui correspondent à nos critères de qualité.</p>
         </div>
       ),
     },
@@ -32,29 +50,20 @@ export const DashboardOnboarding = () => {
       target: ".dashboard-stats",
       content: (
         <div>
-          <h3 className="font-semibold mb-2">Suivez vos performances</h3>
-          <p>Visualisez ici vos statistiques de vente en temps réel.</p>
+          <h3 className="font-semibold mb-2">4. Suivez vos performances</h3>
+          <p>Une fois vos leads validés et mis en vente, vous pourrez suivre vos statistiques de vente en temps réel ici.</p>
         </div>
       ),
     },
     {
-      target: ".recent-activity",
+      target: "a[href='/settings']",
       content: (
         <div>
-          <h3 className="font-semibold mb-2">Activité récente</h3>
-          <p>Retrouvez ici toutes vos dernières transactions et mises à jour.</p>
+          <h3 className="font-semibold mb-2">5. Gérez vos revenus</h3>
+          <p>Retrouvez à tout moment vos informations financières détaillées dans votre compte Stripe, accessible depuis les paramètres.</p>
         </div>
       ),
-    },
-    {
-      target: ".latest-leads",
-      content: (
-        <div>
-          <h3 className="font-semibold mb-2">Vos derniers leads</h3>
-          <p>Consultez et gérez vos leads les plus récents directement depuis votre tableau de bord.</p>
-        </div>
-      ),
-    },
+    }
   ];
 
   useEffect(() => {
@@ -63,7 +72,6 @@ export const DashboardOnboarding = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // Vérifions d'abord si l'utilisateur a déjà vu le tutoriel
         const hasSeenTutorial = localStorage.getItem("dashboard_onboarding_completed");
         
         if (!hasSeenTutorial) {
@@ -80,7 +88,7 @@ export const DashboardOnboarding = () => {
   const handleTourEnd = () => {
     localStorage.setItem("dashboard_onboarding_completed", "true");
     setRunTour(false);
-    toast.success("Guide terminé ! Vous pouvez le retrouver dans les paramètres si besoin.");
+    toast.success("Guide terminé ! N'hésitez pas à contacter notre support si vous avez des questions.");
   };
 
   return (
@@ -112,4 +120,3 @@ export const DashboardOnboarding = () => {
     />
   );
 };
-
