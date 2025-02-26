@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { BarChart3, Users, DollarSign, TrendingUp } from "lucide-react";
+import { BarChart3, Users, DollarSign, TrendingUp, CheckCircle } from "lucide-react";
 
 type Trend = "up" | "down";
 
@@ -17,7 +17,7 @@ export const useDashboardStats = () => {
   return useQuery({
     queryKey: ["dashboardStats"],
     queryFn: async (): Promise<DashboardStat[]> => {
-      const [leadsResult, purchasedLeadsResult, transactionsResult] = await Promise.all([
+      const [leadsResult, purchasedLeadsResult, transactionsResult, soldLeadsResult] = await Promise.all([
         supabase
           .from("lead_files")
           .select("lead_count, created_at")
@@ -29,15 +29,21 @@ export const useDashboardStats = () => {
         supabase
           .from("transactions")
           .select("amount, created_at")
-          .order("created_at", { ascending: false })
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("leads")
+          .select("id")
+          .eq("status", "sold")
       ]);
 
       if (leadsResult.error) throw leadsResult.error;
       if (purchasedLeadsResult.error) throw purchasedLeadsResult.error;
       if (transactionsResult.error) throw transactionsResult.error;
+      if (soldLeadsResult.error) throw soldLeadsResult.error;
 
       const totalLeads = leadsResult.data.reduce((sum, file) => sum + file.lead_count, 0);
       const purchasedLeads = purchasedLeadsResult.data.length;
+      const soldLeads = soldLeadsResult.data.length;
       const totalRevenue = transactionsResult.data.reduce((sum, tx) => sum + Number(tx.amount), 0);
 
       const now = new Date();
@@ -76,6 +82,13 @@ export const useDashboardStats = () => {
           change: `${Math.abs(revenueChange).toFixed(1)}%`,
           trend: revenueChange >= 0 ? "up" : "down",
           icon: DollarSign,
+        },
+        {
+          name: "Leads Vendus",
+          value: soldLeads.toString(),
+          change: "N/A",
+          trend: "up" as const,
+          icon: CheckCircle,
         },
         {
           name: "Leads Achetés",
