@@ -10,7 +10,6 @@ const DashboardHeader = () => {
     <div className="flex items-center justify-between mb-8 mt-12">
       <div>
         <h1 className="text-2xl font-semibold text-market-900">Dashboard</h1>
-        <p className="text-market-600">Manage your leads and track your performance</p>
       </div>
       <Button 
         className="bg-market-600 hover:bg-market-700 text-white"
