@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -78,7 +79,7 @@ const Listing = () => {
 
   const queryClient = useQueryClient();
 
-  const { data: leads, isLoading: loadingLeads } = useQuery<Lead[]>({
+  const { data: leads = [], isLoading: loadingLeads } = useQuery<Lead[]>({
     queryKey: ["leads", filters],
     queryFn: async () => {
       let query = supabase
@@ -134,7 +135,7 @@ const Listing = () => {
         throw error;
       }
 
-      return data;
+      return data as Lead[];
     },
   });
 
@@ -148,11 +149,11 @@ const Listing = () => {
     };
 
     return {
-      villes: Array.from(new Set(leads.map(lead => lead.Ville).filter(Boolean))),
-      pays: Array.from(new Set(leads.map(lead => lead.Pays).filter(Boolean))),
-      entreprises: Array.from(new Set(leads.map(lead => lead.Entreprise).filter(Boolean))),
-      intentions: Array.from(new Set(leads.map(lead => lead.Intention).filter(Boolean))),
-      sources: Array.from(new Set(leads.map(lead => lead.source_du_lead).filter(Boolean)))
+      villes: Array.from(new Set(leads.map(lead => lead.Ville).filter(Boolean))) as string[],
+      pays: Array.from(new Set(leads.map(lead => lead.Pays).filter(Boolean))) as string[],
+      entreprises: Array.from(new Set(leads.map(lead => lead.Entreprise).filter(Boolean))) as string[],
+      intentions: Array.from(new Set(leads.map(lead => lead.Intention).filter(Boolean))) as string[],
+      sources: Array.from(new Set(leads.map(lead => lead.source_du_lead).filter(Boolean))) as string[]
     };
   }, [leads]);
 
@@ -169,7 +170,6 @@ const Listing = () => {
     try {
       setIsLoading(true);
 
-      // 1. Créer une transaction
       const { data: transaction, error: transactionError } = await supabase
         .from('transactions')
         .insert({
@@ -182,7 +182,6 @@ const Listing = () => {
 
       if (transactionError) throw transactionError;
 
-      // 2. Mettre à jour le statut du lead
       const { error: updateError } = await supabase
         .from('leads')
         .update({ status: 'sold' })
@@ -192,7 +191,6 @@ const Listing = () => {
 
       toast.success("Lead acheté avec succès !");
       
-      // Rafraîchir les leads
       await queryClient.invalidateQueries({ queryKey: ["leads"] });
 
     } catch (error: any) {
