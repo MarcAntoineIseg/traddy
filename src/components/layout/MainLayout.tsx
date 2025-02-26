@@ -48,7 +48,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-background">
       {/* Account Access Button - Always visible */}
-      <div className="fixed top-4 right-16 z-50">
+      <div className="fixed top-4 right-4 z-50">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full bg-white shadow-lg">
@@ -71,7 +71,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
 
       <button
-        className="fixed top-4 right-4 z-50 rounded-full p-2 bg-white shadow-lg md:hidden"
+        className="fixed top-16 right-4 z-50 rounded-full p-2 bg-white shadow-lg md:hidden"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
         {isSidebarOpen ? (
