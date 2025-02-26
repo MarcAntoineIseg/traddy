@@ -1,4 +1,3 @@
-
 import "../index.css";
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -162,7 +161,22 @@ const Listing = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleBuyLead = async (lead: Lead) => {
-    setSelectedLead(lead);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: { leadId: lead.id }
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("URL de redirection Stripe non reçue");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+      toast.error("Une erreur est survenue lors de la redirection vers le paiement");
+    }
   };
 
   const handleConfirmPurchase = async () => {
