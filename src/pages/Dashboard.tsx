@@ -22,11 +22,15 @@ const Dashboard = () => {
     queryKey: ["dashboardStats"],
     queryFn: async () => {
       // Fetch all necessary data
-      const [leadsResult, transactionsResult] = await Promise.all([
+      const [leadsResult, purchasedLeadsResult, transactionsResult] = await Promise.all([
         supabase
           .from("lead_files")
           .select("lead_count, created_at")
           .order("created_at", { ascending: false }),
+        supabase
+          .from("leads")
+          .select("id")
+          .eq("status", "purchased"),
         supabase
           .from("transactions")
           .select("amount, created_at")
@@ -34,10 +38,14 @@ const Dashboard = () => {
       ]);
 
       if (leadsResult.error) throw leadsResult.error;
+      if (purchasedLeadsResult.error) throw purchasedLeadsResult.error;
       if (transactionsResult.error) throw transactionsResult.error;
 
       // Calculate total leads
       const totalLeads = leadsResult.data.reduce((sum, file) => sum + file.lead_count, 0);
+      
+      // Calculate purchased leads
+      const purchasedLeads = purchasedLeadsResult.data.length;
       
       // Calculate total revenue
       const totalRevenue = transactionsResult.data.reduce((sum, tx) => sum + Number(tx.amount), 0);
@@ -87,8 +95,8 @@ const Dashboard = () => {
           icon: DollarSign,
         },
         {
-          name: "Conversion Rate",
-          value: `${conversionRate.toFixed(1)}%`,
+          name: "Leads Achetés",
+          value: purchasedLeads.toString(),
           change: "N/A",
           trend: "up",
           icon: TrendingUp,
