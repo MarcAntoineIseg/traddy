@@ -5,6 +5,10 @@ import RecentActivity from "@/components/dashboard/RecentActivity";
 import LatestLeads from "@/components/dashboard/LatestLeads";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { Card } from "@/components/ui/card";
+import { DashboardOnboarding } from "@/components/onboarding/DashboardOnboarding";
+import { Button } from "@/components/ui/button";
+import { Upload } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const { data: dashboardStats, isLoading } = useDashboardStats();
@@ -24,11 +28,28 @@ const Dashboard = () => {
 
   return (
     <div className="animate-fadeIn">
-      <DashboardHeader />
-      <DashboardStats stats={dashboardStats || []} />
+      <DashboardOnboarding />
+      
+      <div className="flex justify-between items-center mb-6">
+        <DashboardHeader />
+        <Link to="/upload-leads" className="upload-leads-button">
+          <Button className="flex items-center gap-2">
+            <Upload size={20} />
+            Vendre des leads
+          </Button>
+        </Link>
+      </div>
+
+      <div className="dashboard-stats">
+        <DashboardStats stats={dashboardStats || []} />
+      </div>
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <RecentActivity />
-        <LatestLeads />
+        <div className="recent-activity">
+          <RecentActivity />
+        </div>
+        <div className="latest-leads">
+          <LatestLeads />
+        </div>
       </div>
     </div>
   );

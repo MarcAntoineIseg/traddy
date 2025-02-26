@@ -1,78 +1,115 @@
+
 import { useState, useEffect } from "react";
 import Joyride, { Step } from "react-joyride";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-interface DashboardOnboardingProps {
-  open: boolean;
-  onClose: () => void;
-}
+export const DashboardOnboarding = () => {
+  const [runTour, setRunTour] = useState(false);
 
-const DashboardOnboarding: React.FC<DashboardOnboardingProps> = ({
-  open,
-  onClose,
-}) => {
-  const [run, setRun] = useState(false);
-  const [steps, setSteps] = useState<Step[]>([
+  const steps: Step[] = [
     {
-      target: ".dashboard-header",
-      content: "Welcome to your dashboard! Let's take a quick tour.",
+      target: "body",
+      placement: "center",
+      disableBeacon: true,
+      content: (
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Bienvenue sur Traddy! 👋</h2>
+          <p>Nous allons vous guider pour vendre vos premiers leads en quelques étapes simples.</p>
+        </div>
+      ),
+    },
+    {
+      target: ".upload-leads-button",
+      content: (
+        <div>
+          <h3 className="font-semibold mb-2">Commencez par vendre vos leads</h3>
+          <p>Cliquez ici pour télécharger votre premier fichier de leads à vendre.</p>
+        </div>
+      ),
     },
     {
       target: ".dashboard-stats",
-      content: "Here you can see an overview of your lead data.",
+      content: (
+        <div>
+          <h3 className="font-semibold mb-2">Suivez vos performances</h3>
+          <p>Visualisez ici vos statistiques de vente en temps réel.</p>
+        </div>
+      ),
     },
     {
       target: ".recent-activity",
-      content: "Check out your recent activity here.",
+      content: (
+        <div>
+          <h3 className="font-semibold mb-2">Activité récente</h3>
+          <p>Retrouvez ici toutes vos dernières transactions et mises à jour.</p>
+        </div>
+      ),
     },
     {
       target: ".latest-leads",
-      content: "See your latest leads and their status.",
+      content: (
+        <div>
+          <h3 className="font-semibold mb-2">Vos derniers leads</h3>
+          <p>Consultez et gérez vos leads les plus récents directement depuis votre tableau de bord.</p>
+        </div>
+      ),
     },
-  ]);
+  ];
 
   useEffect(() => {
-    if (open) {
-      setRun(true);
-    } else {
-      setRun(false);
-    }
-  }, [open]);
+    const checkOnboardingStatus = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-  const handleJoyrideCallback = (data: any) => {
-    const { status } = data;
+        // Vérifions d'abord si l'utilisateur a déjà vu le tutoriel
+        const hasSeenTutorial = localStorage.getItem("dashboard_onboarding_completed");
+        
+        if (!hasSeenTutorial) {
+          setRunTour(true);
+        }
+      } catch (error) {
+        console.error("Error checking onboarding status:", error);
+      }
+    };
 
-    if ([ "finished", "skipped" ].includes(status)) {
-      setRun(false);
-      onClose();
-      toast.success("Onboarding complete!");
+    checkOnboardingStatus();
+  }, []);
 
-      // You might want to store that the user has completed onboarding
-      // For example, in local storage or in your database
-      localStorage.setItem("dashboard_onboarding_completed", "true");
-    }
+  const handleTourEnd = () => {
+    localStorage.setItem("dashboard_onboarding_completed", "true");
+    setRunTour(false);
+    toast.success("Guide terminé ! Vous pouvez le retrouver dans les paramètres si besoin.");
   };
 
   return (
     <Joyride
       steps={steps}
-      run={run}
-      continuous={true}
-      showSkipButton={true}
-      callback={handleJoyrideCallback}
+      run={runTour}
+      continuous
+      showProgress
+      showSkipButton
       styles={{
         options: {
-          arrowColor: "#fff",
-          backgroundColor: "#fff",
-          primaryColor: "#007bff",
-          textColor: "#333",
-          width: 300,
+          primaryColor: "#89abe3",
+          textColor: "#4a4a4a",
           zIndex: 1000,
         },
+      }}
+      callback={({ status }) => {
+        if (["finished", "skipped"].includes(status)) {
+          handleTourEnd();
+        }
+      }}
+      locale={{
+        back: "Précédent",
+        close: "Fermer",
+        last: "Terminer",
+        next: "Suivant",
+        skip: "Passer",
       }}
     />
   );
 };
 
-export default DashboardOnboarding;
