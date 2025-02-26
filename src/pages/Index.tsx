@@ -49,7 +49,7 @@ const Index = () => {
               <span className="logo-dot">.</span>
             </h1>
             <p className="text-gray-600 text-sm">
-              Connectez-vous à votre compte
+              Connectez-vous à votre compte 😄
             </p>
           </div>
 
