@@ -225,9 +225,7 @@ const Listing = () => {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-4">Leads Disponibles</h1>
-        
-        <Card className="p-4">
+        <Card className="p-4 bg-gradient-to-br from-white to-[#fae3e7] border-[#ea738d]/20 shadow-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
