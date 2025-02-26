@@ -8,49 +8,73 @@ const corsHeaders = {
 }
 
 Deno.serve(async (req) => {
+  // Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    console.log('Démarrage de la fonction create-checkout-session')
+    
+    // Vérifier la clé Stripe
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
+    if (!stripeKey) {
+      throw new Error('STRIPE_SECRET_KEY not found')
+    }
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
     const { leadId } = await req.json()
+    console.log('LeadId reçu:', leadId)
 
-    // Récupérer les informations du lead
-    const { data: lead, error: leadError } = await supabaseClient
+    // Récupérer les informations du lead avec user_id via lead_file_id
+    console.log('Récupération des informations du lead')
+    const { data: leadData, error: leadError } = await supabaseClient
       .from('leads')
-      .select('*, user_id:lead_file_id(user_id)')
+      .select(`
+        *,
+        lead_file:lead_file_id (
+          user_id
+        )
+      `)
       .eq('id', leadId)
       .single()
 
-    if (leadError || !lead) {
+    if (leadError || !leadData) {
+      console.error('Erreur lors de la récupération du lead:', leadError)
       throw new Error('Lead not found')
     }
 
+    console.log('Lead trouvé:', leadData)
+
     // Récupérer le Stripe account ID du vendeur
+    console.log('Récupération du profil vendeur')
     const { data: sellerProfile, error: sellerError } = await supabaseClient
       .from('profiles')
       .select('stripe_account_id')
-      .eq('id', lead.user_id.user_id)
+      .eq('id', leadData.lead_file.user_id)
       .single()
 
     if (sellerError || !sellerProfile?.stripe_account_id) {
+      console.error('Erreur lors de la récupération du profil vendeur:', sellerError)
       throw new Error('Seller Stripe account not found')
     }
 
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
+    console.log('Profil vendeur trouvé:', sellerProfile)
+
+    const stripe = new Stripe(stripeKey, {
       apiVersion: '2023-10-16',
       httpClient: Stripe.createFetchHttpClient(),
     })
 
     // Calculer les montants
-    const amount = lead.Prix * 100 // Conversion en centimes
+    const amount = Math.round(leadData.Prix * 100) // Conversion en centimes et arrondi
     const platformFee = Math.round(amount * 0.15) // 15% de commission
 
+    console.log('Création de la session Stripe')
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -59,8 +83,8 @@ Deno.serve(async (req) => {
             currency: 'eur',
             unit_amount: amount,
             product_data: {
-              name: `Lead - ${lead.Intention || 'Sans intention'}`,
-              description: `Lead de ${lead.Ville || 'Non spécifié'}, ${lead.Pays || 'Non spécifié'}`,
+              name: `Lead - ${leadData.Intention || 'Sans intention'}`,
+              description: `Lead de ${leadData.Ville || 'Non spécifié'}, ${leadData.Pays || 'Non spécifié'}`,
             },
           },
           quantity: 1,
@@ -77,6 +101,8 @@ Deno.serve(async (req) => {
       },
     })
 
+    console.log('Session Stripe créée avec succès')
+
     return new Response(
       JSON.stringify({ url: session.url }),
       {
@@ -85,8 +111,12 @@ Deno.serve(async (req) => {
       },
     )
   } catch (error) {
+    console.error('Erreur dans la fonction:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: error.toString()
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
