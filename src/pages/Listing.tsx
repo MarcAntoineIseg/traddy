@@ -226,9 +226,9 @@ const Listing = () => {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <Card className="p-4 bg-white border-2 border-[#89abe3] shadow-lg">
+        <Card className="p-4 bg-white shadow">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <div>
+            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Pays
               </label>
@@ -250,7 +250,7 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div>
+            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Ville
               </label>
@@ -272,7 +272,7 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div>
+            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Entreprise
               </label>
@@ -294,7 +294,7 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div>
+            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Intention
               </label>
@@ -316,7 +316,7 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div>
+            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Source
               </label>
@@ -338,7 +338,7 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div>
+            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Âge
               </label>
@@ -370,7 +370,7 @@ const Listing = () => {
               </div>
             </div>
 
-            <div>
+            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Prix (€)
               </label>
@@ -402,7 +402,7 @@ const Listing = () => {
               </div>
             </div>
 
-            <div>
+            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Date de contact
               </label>
@@ -432,7 +432,7 @@ const Listing = () => {
               </div>
             </div>
 
-            <div className="flex items-end">
+            <div className="p-3 border-2 border-[#89abe3] rounded-lg flex items-end">
               <Button
                 variant="outline"
                 onClick={() =>
