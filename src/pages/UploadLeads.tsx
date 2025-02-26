@@ -76,7 +76,6 @@ const UploadLeads = () => {
     <div className="animate-fadeIn">
       <div className="mb-8">
         <BackButton />
-        <h1 className="text-2xl font-semibold text-market-900">Upload Leads</h1>
         <p className="text-market-600">Téléchargez votre fichier CSV contenant les données des leads</p>
       </div>
 

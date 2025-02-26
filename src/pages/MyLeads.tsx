@@ -127,7 +127,6 @@ const MyLeads = () => {
   return (
     <div className="animate-fadeIn">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-market-900">My Leads</h1>
         <p className="text-market-600">
           View and manage your imported lead files
         </p>
