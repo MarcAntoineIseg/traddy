@@ -44,8 +44,9 @@ const Index = () => {
       <Card className="w-full max-w-md p-8 shadow-xl rounded-xl bg-white">
         <div className="w-full max-w-sm mx-auto space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900">
-              traddy<span className="text-market-500">.</span>
+            <h1 className="text-3xl font-bold">
+              <span className="logo-text">traddy</span>
+              <span className="logo-dot">.</span>
             </h1>
             <p className="text-gray-600 text-sm">
               Connectez-vous à votre compte
