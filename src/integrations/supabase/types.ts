@@ -42,6 +42,39 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_packs: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          intention: string
+          lead_count: number | null
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          intention: string
+          lead_count?: number | null
+          name: string
+          price?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          intention?: string
+          lead_count?: number | null
+          name?: string
+          price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           Age: number | null

@@ -13,6 +13,7 @@ import Index from "@/pages/Index";
 import SellerConfirmation from "@/pages/SellerConfirmation";
 import InscriptionConfirmation from "@/pages/InscriptionConfirmation";
 import Listing from "@/pages/Listing";
+import Packs from "@/pages/Packs";
 
 import "./App.css";
 
@@ -29,6 +30,14 @@ function App() {
           element={
             <MainLayout>
               <Listing />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/packs"
+          element={
+            <MainLayout>
+              <Packs />
             </MainLayout>
           }
         />
