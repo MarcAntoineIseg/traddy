@@ -1,4 +1,3 @@
-
 import "../index.css";
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -228,7 +227,7 @@ const Listing = () => {
       <div className="mb-8">
         <Card className="p-4 bg-white shadow">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
+            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Pays
               </label>
@@ -250,7 +249,7 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
+            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Ville
               </label>
@@ -272,7 +271,7 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
+            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Entreprise
               </label>
@@ -294,7 +293,7 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
+            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Intention
               </label>
@@ -316,7 +315,7 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
+            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Source
               </label>
@@ -338,7 +337,7 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
+            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Âge
               </label>
@@ -370,7 +369,7 @@ const Listing = () => {
               </div>
             </div>
 
-            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
+            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Prix (€)
               </label>
@@ -402,7 +401,7 @@ const Listing = () => {
               </div>
             </div>
 
-            <div className="p-3 border-2 border-[#89abe3] rounded-lg">
+            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Date de contact
               </label>
@@ -432,7 +431,7 @@ const Listing = () => {
               </div>
             </div>
 
-            <div className="p-3 border-2 border-[#89abe3] rounded-lg flex items-end">
+            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)] flex items-end">
               <Button
                 variant="outline"
                 onClick={() =>
