@@ -34,20 +34,18 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className="min-h-screen bg-market-50">
-      {/* Mobile menu button */}
+    <div className="min-h-screen bg-background">
       <button
         className="fixed top-4 right-4 z-50 rounded-full p-2 bg-white shadow-lg md:hidden"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
         {isSidebarOpen ? (
-          <X className="h-6 w-6 text-market-600" />
+          <X className="h-6 w-6 text-primary" />
         ) : (
-          <Menu className="h-6 w-6 text-market-600" />
+          <Menu className="h-6 w-6 text-primary" />
         )}
       </button>
 
-      {/* Sidebar */}
       <div
         className={cn(
           "fixed inset-y-0 left-0 z-40 w-64 transform bg-white shadow-lg transition-transform duration-300 ease-in-out md:translate-x-0",
@@ -55,14 +53,13 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         )}
       >
         <div className="flex h-full flex-col">
-          {/* Logo */}
           <div className="flex h-16 items-center border-b px-6">
-            <Link to="/" className="text-xl font-semibold text-market-900">
-              traddy
+            <Link to="/" className="text-2xl font-bold">
+              <span className="logo-text">traddy</span>
+              <span className="logo-dot">.</span>
             </Link>
           </div>
 
-          {/* Navigation */}
           <nav className="flex-1 space-y-1 px-3 py-4">
             {navigation.map((item) => {
               const isActive = location.pathname === item.href;
@@ -73,14 +70,14 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   className={cn(
                     "group flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
                     isActive
-                      ? "bg-market-100 text-market-900"
-                      : "text-market-600 hover:bg-market-50 hover:text-market-900"
+                      ? "bg-primary/10 text-primary"
+                      : "text-gray-600 hover:bg-primary/5 hover:text-primary"
                   )}
                 >
                   <item.icon
                     className={cn(
                       "mr-3 h-5 w-5 flex-shrink-0 transition-colors duration-200",
-                      isActive ? "text-market-700" : "text-market-400"
+                      isActive ? "text-primary" : "text-gray-400 group-hover:text-primary"
                     )}
                   />
                   {item.name}
@@ -89,20 +86,18 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             })}
           </nav>
 
-          {/* Logout button */}
-          <div className="border-t border-market-100 p-4">
+          <div className="border-t border-gray-100 p-4">
             <button
               onClick={handleLogout}
-              className="flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-market-600 hover:bg-market-50 hover:text-market-900"
+              className="flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-primary/5 hover:text-primary"
             >
-              <LogOut className="mr-3 h-5 w-5 text-market-400" />
+              <LogOut className="mr-3 h-5 w-5 text-gray-400" />
               Logout
             </button>
           </div>
         </div>
       </div>
 
-      {/* Main content */}
       <div
         className={cn(
           "transition-all duration-300",
