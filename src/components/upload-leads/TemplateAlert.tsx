@@ -62,11 +62,11 @@ export const TemplateAlert = () => {
       <AlertDescription className="flex items-center justify-between">
         <span className="flex items-center">
           <AlertCircle className="mr-2 h-5 w-5 text-red-400" />
-          Please ensure that your file contains the required criteria. Download this template:
+          Merci de vérifier que votre fichier correspond à nos critères. Téléchargez ce template si besoin :
         </span>
         <Button variant="outline" size="sm" className="ml-4" onClick={handleDownloadTemplate}>
           <Download className="mr-2 h-4 w-4" />
-          Download Template
+          Télécharger le template
         </Button>
       </AlertDescription>
     </Alert>
