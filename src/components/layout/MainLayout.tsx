@@ -10,7 +10,6 @@ import {
   LogOut,
   FileSpreadsheet,
   Upload,
-  FileDown,
   List,
   Package,
   UserRound,
@@ -58,7 +57,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     { name: "Packs", href: "/packs", icon: Package },
     { name: "My Leads", href: "/my-leads", icon: FileSpreadsheet },
     { name: "Upload Leads", href: "/upload-leads", icon: Upload },
-    { name: "Transactions", href: "/transactions", icon: FileDown },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 
