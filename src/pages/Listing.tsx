@@ -516,7 +516,7 @@ const Listing = () => {
                         <Button
                           size="sm"
                           onClick={() => handleBuyLead(lead)}
-                          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                          className="bg-[#ea738d] hover:bg-[#d65777] text-white"
                         >
                           Acheter
                         </Button>
@@ -534,6 +534,7 @@ const Listing = () => {
                           <Button
                             variant="default"
                             onClick={handleConfirmPurchase}
+                            className="bg-[#ea738d] hover:bg-[#d65777] text-white"
                             disabled={isLoading}
                           >
                             {isLoading ? "Traitement..." : "Confirmer l'achat"}
