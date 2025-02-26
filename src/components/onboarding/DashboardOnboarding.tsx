@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const DashboardOnboarding = () => {
-  const [runTour, setRunTour] = useState(false);
+  const [runTour, setRunTour] = useState(true); // On démarre directement avec true
 
   const steps: Step[] = [
     {
@@ -72,10 +72,10 @@ export const DashboardOnboarding = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        const hasSeenTutorial = localStorage.getItem("dashboard_onboarding_completed");
+        const hasSeenTutorial = localStorage.getItem(`dashboard_onboarding_completed_${user.id}`);
         
-        if (!hasSeenTutorial) {
-          setRunTour(true);
+        if (hasSeenTutorial) {
+          setRunTour(false);
         }
       } catch (error) {
         console.error("Error checking onboarding status:", error);
@@ -85,10 +85,17 @@ export const DashboardOnboarding = () => {
     checkOnboardingStatus();
   }, []);
 
-  const handleTourEnd = () => {
-    localStorage.setItem("dashboard_onboarding_completed", "true");
-    setRunTour(false);
-    toast.success("Guide terminé ! N'hésitez pas à contacter notre support si vous avez des questions.");
+  const handleTourEnd = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        localStorage.setItem(`dashboard_onboarding_completed_${user.id}`, "true");
+      }
+      setRunTour(false);
+      toast.success("Guide terminé ! N'hésitez pas à contacter notre support si vous avez des questions.");
+    } catch (error) {
+      console.error("Error saving onboarding status:", error);
+    }
   };
 
   return (
@@ -98,6 +105,7 @@ export const DashboardOnboarding = () => {
       continuous
       showProgress
       showSkipButton
+      disableOverlayClose
       styles={{
         options: {
           primaryColor: "#89abe3",
