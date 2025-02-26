@@ -16,7 +16,7 @@ const DashboardHeader = () => {
         onClick={() => navigate("/upload-leads")}
       >
         <Plus className="mr-2 h-4 w-4" />
-        Sell Leads
+        Vendre mes leads 🚀
       </Button>
     </div>
   );
