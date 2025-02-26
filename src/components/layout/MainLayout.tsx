@@ -13,8 +13,16 @@ import {
   FileDown,
   List,
   Package,
+  UserRound,
 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -39,6 +47,29 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Account Access Button - Always visible */}
+      <div className="fixed top-4 right-16 z-50">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="rounded-full bg-white shadow-lg">
+              <UserRound className="h-5 w-5 text-[#333333]" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem asChild>
+              <Link to="/settings" className="flex items-center">
+                <Settings className="mr-2 h-4 w-4" />
+                Paramètres
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+              <LogOut className="mr-2 h-4 w-4" />
+              Se déconnecter
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
       <button
         className="fixed top-4 right-4 z-50 rounded-full p-2 bg-white shadow-lg md:hidden"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -89,16 +120,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
               );
             })}
           </nav>
-
-          <div className="border-t border-gray-100 p-4">
-            <button
-              onClick={handleLogout}
-              className="flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-[#333333] hover:bg-primary/5 hover:text-primary"
-            >
-              <LogOut className="mr-3 h-5 w-5 text-[#333333] group-hover:text-primary" />
-              Logout
-            </button>
-          </div>
         </div>
       </div>
 
