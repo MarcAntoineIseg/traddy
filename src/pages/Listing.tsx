@@ -1,3 +1,4 @@
+
 import "../index.css";
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -223,12 +224,12 @@ const Listing = () => {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-8">
-        <Card className="p-4 bg-white shadow">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+    <div className="container mx-auto py-4">
+      <div className="mb-4">
+        <Card className="p-2 bg-white shadow">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+            <div className="p-2 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
+              <label className="block text-xs font-medium text-gray-700 mb-0.5">
                 Pays
               </label>
               <Select
@@ -237,7 +238,7 @@ const Listing = () => {
                   setFilters((prev) => ({ ...prev, pays: value }))
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-8">
                   <SelectValue placeholder="Sélectionner un pays" />
                 </SelectTrigger>
                 <SelectContent>
@@ -249,8 +250,8 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="p-2 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
+              <label className="block text-xs font-medium text-gray-700 mb-0.5">
                 Ville
               </label>
               <Select
@@ -259,7 +260,7 @@ const Listing = () => {
                   setFilters((prev) => ({ ...prev, ville: value }))
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-8">
                   <SelectValue placeholder="Sélectionner une ville" />
                 </SelectTrigger>
                 <SelectContent>
@@ -271,8 +272,8 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="p-2 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
+              <label className="block text-xs font-medium text-gray-700 mb-0.5">
                 Entreprise
               </label>
               <Select
@@ -281,7 +282,7 @@ const Listing = () => {
                   setFilters((prev) => ({ ...prev, entreprise: value }))
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-8">
                   <SelectValue placeholder="Sélectionner une entreprise" />
                 </SelectTrigger>
                 <SelectContent>
@@ -293,8 +294,8 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="p-2 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
+              <label className="block text-xs font-medium text-gray-700 mb-0.5">
                 Intention
               </label>
               <Select
@@ -303,7 +304,7 @@ const Listing = () => {
                   setFilters((prev) => ({ ...prev, intention: value }))
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-8">
                   <SelectValue placeholder="Sélectionner l'intention" />
                 </SelectTrigger>
                 <SelectContent>
@@ -315,8 +316,8 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="p-2 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
+              <label className="block text-xs font-medium text-gray-700 mb-0.5">
                 Source
               </label>
               <Select
@@ -325,7 +326,7 @@ const Listing = () => {
                   setFilters((prev) => ({ ...prev, source: value }))
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-8">
                   <SelectValue placeholder="Sélectionner une source" />
                 </SelectTrigger>
                 <SelectContent>
@@ -337,11 +338,11 @@ const Listing = () => {
               </Select>
             </div>
 
-            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="p-2 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
+              <label className="block text-xs font-medium text-gray-700 mb-0.5">
                 Âge
               </label>
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <Input
                   type="number"
                   placeholder="Min"
@@ -352,7 +353,7 @@ const Listing = () => {
                       age: { ...prev.age, min: e.target.value ? Number(e.target.value) : null }
                     }))
                   }
-                  className="w-full"
+                  className="w-full h-8"
                 />
                 <Input
                   type="number"
@@ -364,16 +365,16 @@ const Listing = () => {
                       age: { ...prev.age, max: e.target.value ? Number(e.target.value) : null }
                     }))
                   }
-                  className="w-full"
+                  className="w-full h-8"
                 />
               </div>
             </div>
 
-            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="p-2 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
+              <label className="block text-xs font-medium text-gray-700 mb-0.5">
                 Prix (€)
               </label>
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <Input
                   type="number"
                   placeholder="Min"
@@ -384,7 +385,7 @@ const Listing = () => {
                       prix: { ...prev.prix, min: e.target.value ? Number(e.target.value) : null }
                     }))
                   }
-                  className="w-full"
+                  className="w-full h-8"
                 />
                 <Input
                   type="number"
@@ -396,16 +397,16 @@ const Listing = () => {
                       prix: { ...prev.prix, max: e.target.value ? Number(e.target.value) : null }
                     }))
                   }
-                  className="w-full"
+                  className="w-full h-8"
                 />
               </div>
             </div>
 
-            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="p-2 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)]">
+              <label className="block text-xs font-medium text-gray-700 mb-0.5">
                 Date de contact
               </label>
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <Input
                   type="date"
                   value={filters.dateContact.start ?? ""}
@@ -415,7 +416,7 @@ const Listing = () => {
                       dateContact: { ...prev.dateContact, start: e.target.value || null }
                     }))
                   }
-                  className="w-full"
+                  className="w-full h-8"
                 />
                 <Input
                   type="date"
@@ -426,12 +427,12 @@ const Listing = () => {
                       dateContact: { ...prev.dateContact, end: e.target.value || null }
                     }))
                   }
-                  className="w-full"
+                  className="w-full h-8"
                 />
               </div>
             </div>
 
-            <div className="p-3 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)] flex items-end">
+            <div className="p-2 border border-[#89abe3] rounded-lg shadow-[0_2px_8px_rgba(137,171,227,0.15)] flex items-end">
               <Button
                 variant="outline"
                 onClick={() =>
@@ -447,9 +448,9 @@ const Listing = () => {
                     sortByDate: false,
                   })
                 }
-                className="w-full"
+                className="w-full h-8 text-sm"
               >
-                <Filter className="mr-2 h-4 w-4" />
+                <Filter className="mr-2 h-3 w-3" />
                 Effacer les filtres
               </Button>
             </div>
