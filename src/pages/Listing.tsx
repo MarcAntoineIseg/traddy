@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -501,7 +500,7 @@ const Listing = () => {
                         <Button
                           size="sm"
                           onClick={() => handleBuyLead(lead)}
-                          className="bg-market-600 hover:bg-market-700 text-white"
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground"
                         >
                           Acheter
                         </Button>
