@@ -13,11 +13,11 @@ export const FileUploader = ({ isUploading, onFileSelect }: FileUploaderProps) =
     const file = e.target.files?.[0];
     if (file) {
       if (file.type !== "text/csv") {
-        toast.error("Please upload a CSV file");
+        toast.error("Merci de télécharger un fichier CSV");
         return;
       }
       onFileSelect(file);
-      toast.success("File selected successfully");
+      toast.success("Fichier accepté");
     }
   };
 
@@ -25,7 +25,7 @@ export const FileUploader = ({ isUploading, onFileSelect }: FileUploaderProps) =
     <div className="flex flex-col items-center justify-center border-2 border-dashed border-market-200 rounded-lg p-8 mb-6">
       <Upload className="h-12 w-12 text-market-400 mb-4" />
       <p className="text-market-600 mb-4 text-center">
-        Drag and drop your CSV file here, or click to browse
+        Importez votre fichier CSV ici, ou cliquez ici pour rechercher
       </p>
       <Input
         type="file"
