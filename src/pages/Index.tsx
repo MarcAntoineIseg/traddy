@@ -40,19 +40,19 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-center items-center p-4">
-      <Card className="w-full max-w-md p-8 shadow-lg rounded-lg">
-        <div className="w-full max-w-sm mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2 text-gray-900">
-              traddy
+    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gray-50">
+      <Card className="w-full max-w-md p-8 shadow-xl rounded-xl bg-white">
+        <div className="w-full max-w-sm mx-auto space-y-6">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-bold text-gray-900">
+              traddy<span className="text-market-500">.</span>
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm">
               Connectez-vous à votre compte
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label
                 htmlFor="email"
@@ -64,11 +64,11 @@ const Index = () => {
                 id="email"
                 type="email"
                 placeholder="vous@example.com"
-                className="w-full p-2 border border-gray-300 rounded-md"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                 disabled={isLoading}
+                className="w-full bg-white"
               />
             </div>
 
@@ -83,28 +83,28 @@ const Index = () => {
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                className="w-full p-2 border border-gray-300 rounded-md"
                 required
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                 disabled={isLoading}
+                className="w-full bg-white"
               />
             </div>
 
             <Button 
               type="submit" 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+              className="w-full bg-market-600 hover:bg-market-700 text-white"
               disabled={isLoading}
             >
               {isLoading ? "Connexion..." : "Se connecter"}
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="text-center">
             <button
               type="button"
               onClick={() => navigate("/create-account")}
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+              className="text-sm text-market-600 hover:text-market-700 font-medium"
               disabled={isLoading}
             >
               Pas encore de compte ? Inscrivez-vous
