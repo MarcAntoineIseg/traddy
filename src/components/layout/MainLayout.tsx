@@ -40,9 +40,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
         {isSidebarOpen ? (
-          <X className="h-6 w-6 text-primary" />
+          <X className="h-6 w-6 text-[#333333]" />
         ) : (
-          <Menu className="h-6 w-6 text-primary" />
+          <Menu className="h-6 w-6 text-[#333333]" />
         )}
       </button>
 
@@ -71,13 +71,13 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                     "group flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
                     isActive
                       ? "bg-primary/10 text-primary"
-                      : "text-gray-600 hover:bg-primary/5 hover:text-primary"
+                      : "text-[#333333] hover:bg-primary/5 hover:text-primary"
                   )}
                 >
                   <item.icon
                     className={cn(
                       "mr-3 h-5 w-5 flex-shrink-0 transition-colors duration-200",
-                      isActive ? "text-primary" : "text-gray-400 group-hover:text-primary"
+                      isActive ? "text-primary" : "text-[#333333] group-hover:text-primary"
                     )}
                   />
                   {item.name}
@@ -89,9 +89,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="border-t border-gray-100 p-4">
             <button
               onClick={handleLogout}
-              className="flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-primary/5 hover:text-primary"
+              className="flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-[#333333] hover:bg-primary/5 hover:text-primary"
             >
-              <LogOut className="mr-3 h-5 w-5 text-gray-400" />
+              <LogOut className="mr-3 h-5 w-5 text-[#333333] group-hover:text-primary" />
               Logout
             </button>
           </div>
