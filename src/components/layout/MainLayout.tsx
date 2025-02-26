@@ -11,6 +11,7 @@ import {
   FileSpreadsheet,
   Upload,
   FileDown,
+  List,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -21,6 +22,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Listing", href: "/listing", icon: List },
     { name: "My Leads", href: "/my-leads", icon: FileSpreadsheet },
     { name: "Upload Leads", href: "/upload-leads", icon: Upload },
     { name: "Transactions", href: "/transactions", icon: FileDown },
