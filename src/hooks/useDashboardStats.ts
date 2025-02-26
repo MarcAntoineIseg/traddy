@@ -3,10 +3,20 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BarChart3, Users, DollarSign, TrendingUp } from "lucide-react";
 
+type Trend = "up" | "down";
+
+interface DashboardStat {
+  name: string;
+  value: string;
+  change: string;
+  trend: Trend;
+  icon: any;
+}
+
 export const useDashboardStats = () => {
   return useQuery({
     queryKey: ["dashboardStats"],
-    queryFn: async () => {
+    queryFn: async (): Promise<DashboardStat[]> => {
       const [leadsResult, purchasedLeadsResult, transactionsResult] = await Promise.all([
         supabase
           .from("lead_files")
@@ -71,14 +81,14 @@ export const useDashboardStats = () => {
           name: "Leads Achetés",
           value: purchasedLeads.toString(),
           change: "N/A",
-          trend: "up",
+          trend: "up" as const,
           icon: TrendingUp,
         },
         {
           name: "Active Listings",
           value: leadsResult.data.length.toString(),
           change: "N/A",
-          trend: "up",
+          trend: "up" as const,
           icon: BarChart3,
         },
       ];
